@@ -22,31 +22,33 @@ For training the end-to-end version of Faster R-CNN with VGG16, 3G of GPU memory
 
    ```bash
    # Make sure to clone with --recursive
-   git clone --recursive https://github.com/smallcorgi/Faster-RCNN_TF.git
+   git clone --recursive git@github.com:KerrWu/detection_block_zoo.git
    ```
 
    
 
 2. Build the Cython modules
 
+   To make at cpu-only machine (or other machine without CUDA, i.e, mac), I comment some code related to NVCC. BAsiclly just some NMS code which use GPU to accelerate.
+   
    ```bash
    cd $FRCN_ROOT/lib
-   make
+make
    ```
-
+   
    
 
 ## Demo
 
-*After successfully completing basic installation*, you'll be ready to run the demo.
+After successfully completing basic installation, you'll be ready to run the demo.
 
-Download model training on PASCAL VOC 2007 [[Google Drive\]](https://drive.google.com/open?id=0ByuDEGFYmWsbZ0EzeUlHcGFIVWM) [[Dropbox\]](https://www.dropbox.com/s/cfz3blmtmwj6bdh/VGGnet_fast_rcnn_iter_70000.ckpt?dl=0)
+Please download pre-train model on PASCAL VOC 2007 first.
 
 To run the demo
 
 ```bash
-cd $FRCN_ROOT
-python ./tools/demo.py --model model_path
+GPU_ID=0
+CUDA_VISIBLE_DEVICES=${GPU_ID} ./tools/demo.py
 ```
 
 
@@ -54,6 +56,8 @@ python ./tools/demo.py --model model_path
 
 
 ## Training Model
+
+it is a single-gpu version just for personal learning, multi-gpu version please see [tensorpack](https://github.com/tensorpack/tensorpack/tree/master/examples/FasterRCNN)	
 
 
 
@@ -99,22 +103,65 @@ python ./tools/demo.py --model model_path
    
 
 5. Download pre-trained ImageNet models
-   [[Google Drive\]](https://drive.google.com/open?id=0ByuDEGFYmWsbNVF5eExySUtMZmM) [[Dropbox\]](https://www.dropbox.com/s/po2kzdhdgl4ix55/VGG_imagenet.npy?dl=0)
-
-   ```bash
-   mv VGG_imagenet.npy $FRCN_ROOT/data/pretrain_model/VGG_imagenet.npy
-   ```
-
    
-
+```bash
+   mkdir -p data/imagenet_weights
+   cd data/imagenet_weights
+   wget -v http://download.tensorflow.org/models/vgg_16_2016_08_28.tar.gz
+tar -xzvf vgg_16_2016_08_28.tar.gz
+   mv vgg_16.ckpt vgg16.ckpt
+cd ../..
+   ```
+   
+   ```bash
+   mkdir -p data/imagenet_weights
+   cd data/imagenet_weights
+   wget -v http://download.tensorflow.org/models/resnet_v1_101_2016_08_28.tar.gz
+   tar -xzvf resnet_v1_101_2016_08_28.tar.gz
+   mv resnet_v1_101.ckpt res101.ckpt
+   cd ../..
+   ```
+   
+   
+   
 6. Run script to train and test model
 
    ```bash
-   cd $FRCN_ROOT
-   ./experiments/scripts/faster_rcnn_end2end.sh $DEVICE $DEVICE_ID VGG16 pascal_voc
+   ./experiments/scripts/train_faster_rcnn.sh [GPU_ID] [DATASET] [NET]
+   # GPU_ID is the GPU you want to test on
+   # NET in {vgg16, res50, res101, res152} is the network arch to use
+   # DATASET {pascal_voc, pascal_voc_0712, coco} is defined in train_faster_rcnn.sh
+   # Examples:
+   ./experiments/scripts/train_faster_rcnn.sh 0 pascal_voc vgg16
+   ./experiments/scripts/train_faster_rcnn.sh 1 coco res101
    ```
 
    
 
+7. Visualization with Tensorboard
 
+   ```bash
+   tensorboard --logdir=tensorboard/vgg16/voc_2007_trainval/ --port=7001 &
+   tensorboard --logdir=tensorboard/vgg16/coco_2014_train+coco_2014_valminusminival/ --port=7002 &
+   ```
 
+   
+   
+
+8. Test and evaluate
+
+   ```bash
+   ./experiments/scripts/test_faster_rcnn.sh [GPU_ID] [DATASET] [NET]
+   # GPU_ID is the GPU you want to test on
+   # NET in {vgg16, res50, res101, res152} is the network arch to use
+   # DATASET {pascal_voc, pascal_voc_0712, coco} is defined in test_faster_rcnn.sh
+   # Examples:
+   ./experiments/scripts/test_faster_rcnn.sh 0 pascal_voc vgg16
+   ./experiments/scripts/test_faster_rcnn.sh 1 coco res101
+   ```
+
+   You can use `tools/reval.sh` for re-evaluation
+
+   
+
+   
