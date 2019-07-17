@@ -33,7 +33,16 @@ For training the end-to-end version of Faster R-CNN with VGG16, 3G of GPU memory
    
    ```bash
    cd $FRCN_ROOT/lib
-make
+make clean
+   make
+   cd ..
+   
+   
+   cd data
+   git clone https://github.com/pdollar/coco.git
+   cd coco/PythonAPI
+   make
+   cd ../../..
    ```
    
    
