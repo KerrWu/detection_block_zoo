@@ -29,7 +29,7 @@ For training the end-to-end version of Faster R-CNN with VGG16, 3G of GPU memory
 
 2. Build the Cython modules
 
-   To make at cpu-only machine (or other machine without CUDA, i.e, mac), I comment some code related to NVCC. BAsiclly just some NMS code which use GPU to accelerate.
+   To make at cpu-only machine (or other machine without CUDA, i.e, mac), I comment some code related to NVCC. Basically just some NMS code which use GPU to accelerate.
    
    
    
@@ -45,14 +45,14 @@ For training the end-to-end version of Faster R-CNN with VGG16, 3G of GPU memory
    cd coco/PythonAPI
    make
    cd ../../..
-   ```
+```
+
    
+
    
+
    
-   
-   
-   
-   
+
    
 
 ## Demo
@@ -120,7 +120,7 @@ it is a single-gpu version just for personal learning, multi-gpu version please 
    
 
 5. Download pre-trained ImageNet models
-   
+  
 ```bash
    mkdir -p data/imagenet_weights
    cd data/imagenet_weights
@@ -128,8 +128,8 @@ it is a single-gpu version just for personal learning, multi-gpu version please 
 tar -xzvf vgg_16_2016_08_28.tar.gz
    mv vgg_16.ckpt vgg16.ckpt
 cd ../..
-   ```
-   
+```
+
    ```bash
    mkdir -p data/imagenet_weights
    cd data/imagenet_weights
@@ -138,9 +138,9 @@ cd ../..
    mv resnet_v1_101.ckpt res101.ckpt
    cd ../..
    ```
+
    
-   
-   
+
 6. Run script to train and test model
 
    ```bash
@@ -164,7 +164,6 @@ cd ../..
 
    
    
-
 8. Test and evaluate
 
    ```bash
