@@ -1,6 +1,6 @@
 # Detection Block Zoo 
 
-It is a Module Zoo for object detection based on two-stage algorithm (Faster R-CNN). For details about R-CNN please refer to the paper [Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks](http://arxiv.org/pdf/1506.01497v3.pdf) by Shaoqing Ren, Kaiming He, Ross Girshick, Jian Sun. And the basic framework of Faster R-CNN are implemented in pure python3 environment (mainly inspired by [endernewton's implement](https://github.com/endernewton/tf-faster-rcnn)). It have been tested on cpu-only, nvi-gpu and Mac-os machine (without dependency on CUDA-CUDNN-NVCC).
+It is a Block Zoo for object detection based on two-stage algorithm (Faster R-CNN). For details about R-CNN please refer to the paper [Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks](http://arxiv.org/pdf/1506.01497v3.pdf) by Shaoqing Ren, Kaiming He, Ross Girshick, Jian Sun. And the basic framework of Faster R-CNN are implemented in pure python3 environment (mainly inspired by [endernewton's implement](https://github.com/endernewton/tf-faster-rcnn)). It have been tested on cpu-only, nvi-gpu and Mac-os machine (without dependency on CUDA-CUDNN-NVCC).
 
 
 
