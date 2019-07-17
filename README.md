@@ -1,4 +1,4 @@
-# Detection Module Zoo 
+# Detection Block Zoo 
 
 It is a Module Zoo for object detection based on two-stage algorithm (Faster R-CNN). For details about R-CNN please refer to the paper [Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks](http://arxiv.org/pdf/1506.01497v3.pdf) by Shaoqing Ren, Kaiming He, Ross Girshick, Jian Sun. And the basic framework of Faster R-CNN are implemented in pure python3 environment (mainly inspired by [endernewton's implement](https://github.com/endernewton/tf-faster-rcnn)). It have been tested on cpu-only, nvi-gpu and Mac-os machine (without dependency on CUDA-CUDNN-NVCC).
 
@@ -122,21 +122,21 @@ it is a single-gpu version just for personal learning, multi-gpu version please 
 5. Download pre-trained ImageNet models
   
 ```bash
-   mkdir -p data/imagenet_weights
-   cd data/imagenet_weights
-   wget -v http://download.tensorflow.org/models/vgg_16_2016_08_28.tar.gz
+mkdir -p data/imagenet_weights
+cd data/imagenet_weights
+wget -v http://download.tensorflow.org/models/vgg_16_2016_08_28.tar.gz
 tar -xzvf vgg_16_2016_08_28.tar.gz
-   mv vgg_16.ckpt vgg16.ckpt
+mv vgg_16.ckpt vgg16.ckpt
 cd ../..
 ```
 
    ```bash
-   mkdir -p data/imagenet_weights
-   cd data/imagenet_weights
-   wget -v http://download.tensorflow.org/models/resnet_v1_101_2016_08_28.tar.gz
-   tar -xzvf resnet_v1_101_2016_08_28.tar.gz
-   mv resnet_v1_101.ckpt res101.ckpt
-   cd ../..
+mkdir -p data/imagenet_weights
+cd data/imagenet_weights
+wget -v http://download.tensorflow.org/models/resnet_v1_101_2016_08_28.tar.gz
+tar -xzvf resnet_v1_101_2016_08_28.tar.gz
+mv resnet_v1_101.ckpt res101.ckpt
+cd ../..
    ```
 
    
