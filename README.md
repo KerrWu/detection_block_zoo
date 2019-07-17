@@ -186,11 +186,9 @@ cd ../..
 
 ## Exp on VOC0712
 
-**default setting:**
 
 
-
-### Training
+### Default Setting on Training
 
 lr = 0.001
 
@@ -228,7 +226,7 @@ anchor ratio = 0.5, 1, 2
 
 
 
-### Testing:
+### Default Setting on Testing:
 
 rpn nms threshold = 0.7
 
