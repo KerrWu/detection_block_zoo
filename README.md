@@ -181,3 +181,20 @@ cd ../..
    
 
    
+
+
+
+## Results
+
+```
+backbone | scale | ratio | loss | iter |map 
+:-: | :-: | :-: | :-: | :-: | :-:
+res101 | 8, 16, 32 | 0.5, 1, 2 | cross entropy + smooth L1 | 1w5 | 59.22 | 
+```
+
+
+
+
+
+
+
