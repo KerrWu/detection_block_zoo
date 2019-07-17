@@ -22,7 +22,7 @@ For training the end-to-end version of Faster R-CNN with VGG16, 3G of GPU memory
 
    ```bash
    # Make sure to clone with --recursive
-   git clone --recursive git@github.com:KerrWu/detection_block_zoo.git
+   git clone --recursive https://github.com/KerrWu/detection_block_zoo.git
    ```
 
    
