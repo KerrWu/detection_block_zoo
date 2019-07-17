@@ -186,9 +186,43 @@ cd ../..
 
 ## Results
 
-| backbone |   scale   |   ratio   |           loss            | iter |  map  |
-| :------: | :-------: | :-------: | :-----------------------: | :--: | :---: |
-|  res101  | 8, 16, 32 | 0.5, 1, 2 | cross entropy + smooth L1 | 1w5  | 59.22 |
+default setting:
+
+lr = 0.001
+
+momentum = 0.9
+
+weight_decay = 0.0001
+
+scales = 600
+
+rpn batch size = 256
+
+roi batch size = 128
+
+fraction of foreground in a batch = 0.25
+
+foreground IOU threshold = 0.5
+
+background IOU threshold = 0.1 - 0.5
+
+positive IOU = 0.7
+
+negative IOU = 0.3
+
+rpn in max = 12000
+
+rpn out max = 2000
+
+rpn nms = 0.3
+
+
+
+
+
+| backbone | anchor scale | achor ratio |           loss            | iter |  map  |
+| :------: | :----------: | :---------: | :-----------------------: | :--: | :---: |
+|  res101  |  8, 16, 32   |  0.5, 1, 2  | cross entropy + smooth L1 | 1w5  | 59.22 |
 
 
 
