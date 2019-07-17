@@ -184,9 +184,13 @@ cd ../..
 
 
 
-## Results
+## Exp on VOC0712
 
-default setting:
+**default setting:**
+
+
+
+### Training
 
 lr = 0.001
 
@@ -216,13 +220,33 @@ rpn out max = 2000
 
 rpn nms = 0.3
 
+actor scale = 8, 16, 32
+
+anchor ratio = 0.5, 1, 2
 
 
 
 
-| backbone | anchor scale | achor ratio |           loss            | iter |  map  |
-| :------: | :----------: | :---------: | :-----------------------: | :--: | :---: |
-|  res101  |  8, 16, 32   |  0.5, 1, 2  | cross entropy + smooth L1 | 1w5  | 59.22 |
+
+### Testing:
+
+rpn nms threshold = 0.7
+
+rpn nms max in = 6000
+
+rpn nms max out = 300
+
+final nms threshold = 0.3
+
+
+
+
+
+### Results
+
+| backbone | fpn  |     roi     |           loss            | iter |  map  |
+| :------: | :--: | :---------: | :-----------------------: | :--: | :---: |
+|  res101  | w/o  | roi pooling | cross entropy + smooth L1 | 1w5  | 59.46 |
 
 
 
