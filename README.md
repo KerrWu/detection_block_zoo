@@ -31,9 +31,11 @@ For training the end-to-end version of Faster R-CNN with VGG16, 3G of GPU memory
 
    To make at cpu-only machine (or other machine without CUDA, i.e, mac), I comment some code related to NVCC. BAsiclly just some NMS code which use GPU to accelerate.
    
-   ```bash
+   
+   
+```bash
    cd $FRCN_ROOT/lib
-make clean
+   make clean
    make
    cd ..
    
@@ -44,6 +46,12 @@ make clean
    make
    cd ../../..
    ```
+   
+   
+   
+   
+   
+   
    
    
 
