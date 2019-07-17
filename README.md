@@ -240,7 +240,7 @@ final nms threshold = 0.3
 
 
 
-### Results
+### Results on VOC07 test
 
 | backbone | fpn  |     roi     |           loss            | iter |  map  |
 | :------: | :--: | :---------: | :-----------------------: | :--: | :---: |
