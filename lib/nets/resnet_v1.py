@@ -239,13 +239,12 @@ class resnetv1(Network):
                 continue
 
             if "fpn" in v.name:
-                print(v.name)
                 continue
 
             if v.name.split(':')[0] in var_keep_dic:
                 print('Variables restored: %s' % v.name)
+                print(v, var_keep_dic[v.name.split(':')[0]])
                 variables_to_restore.append(v)
-        print("append done")
         return variables_to_restore
 
     def fix_variables(self, sess, pretrained_model):
