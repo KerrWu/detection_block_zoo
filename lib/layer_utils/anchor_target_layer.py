@@ -17,6 +17,8 @@ from model.bbox_transform import bbox_transform
 
 def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, _feat_stride, all_anchors, num_anchors):
   """Same as the anchor target layer in original Fast/er RCNN """
+  print(rpn_cls_score, gt_boxes, im_info, _feat_stride, all_anchors, num_anchors)
+
   A = num_anchors
   total_anchors = all_anchors.shape[0]
   K = total_anchors / num_anchors
@@ -115,7 +117,6 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, _feat_stride, all_anch
   bbox_outside_weights = _unmap(bbox_outside_weights, total_anchors, inds_inside, fill=0)
 
   # labels
-  print("height = {}, width = {}, A = {}".format(height, width, A))
   labels = labels.reshape((1, height, width, A)).transpose(0, 3, 1, 2)
   labels = labels.reshape((1, 1, A * height, width))
   rpn_labels = labels
