@@ -192,13 +192,16 @@ class resnetv1(Network):
         with slim.arg_scope(resnet_arg_scope(is_training=is_training)):
 
             print("pool5 = ", pool5)
-            
+
             fc7, _ = resnet_v1.resnet_v1(pool5,
                                          self._blocks[-1:],
                                          global_pool=False,
                                          include_root_block=False,
                                          reuse=reuse,
                                          scope=self._scope)
+
+            print("fc7 = ",fc7)
+            print(_)
             # average pooling done by reduce_mean
             fc7 = tf.reduce_mean(fc7, axis=[1, 2])
         return fc7
