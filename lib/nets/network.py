@@ -346,7 +346,8 @@ class Network(object):
                     pool5 = self._crop_pool_layer(net_conv, rois, "pool5")
                 else:
                     raise NotImplementedError
-
+            print("pool5 shape = ", pool5)
+            
             with tf.variable_scope("", reuse=tf.AUTO_REUSE):
                 fc7 = self._head_to_tail(pool5, is_training, reuse=reuse)
 
