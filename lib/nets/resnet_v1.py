@@ -142,16 +142,14 @@ class resnetv1(Network):
 
         if cfg.RESNET.FIXED_BLOCKS < 3:
             with slim.arg_scope(resnet_arg_scope(is_training=is_training)):
-                net_conv, endpoints2 = resnet_v1.resnet_v1(net_conv,
+                net_conv, endpoints = resnet_v1.resnet_v1(net_conv,
                                                           self._blocks[cfg.RESNET.FIXED_BLOCKS:-1],
                                                           global_pool=False,
                                                           include_root_block=False,
                                                           reuse=reuse,
                                                           scope=self._scope)
         if cfg.RESNET.FIXED_BLOCKS > 0:
-            endpoints=  endpoints2.update(endpoints1)
-        else:
-            endpoints = endpoints2
+            endpoints.update(endpoints1)
 
 
         p5 = endpoints[self._scope + "/block3"]
@@ -162,7 +160,7 @@ class resnetv1(Network):
         with tf.variable_scope("fpn", reuse=reuse):
 
             with slim.arg_scope(resnet_arg_scope(is_training=is_training)):
-                
+
                 p5 = resnet_utils.conv2d_same(p5, 256, 1, stride=1)
                 p5_map = resnet_utils.conv2d_same(p5, 256, 3, stride=1, scope='fpn_p5')
                 fpn_map_list.append(p5_map)
