@@ -87,7 +87,11 @@ class resnetv1(Network):
 
   def _image_to_head(self, is_training, reuse=None):
     assert (0 <= cfg.RESNET.FIXED_BLOCKS <= 3)
-    # Now the base is always fixed during training
+    # Now the base is always fixed (freeze) during training
+    # First build first few layers manually
+    # than freeze some layers based on cfg setting
+    # than train remain layers
+
     with slim.arg_scope(resnet_arg_scope(is_training=False)):
       net_conv = self._build_base()
     if cfg.RESNET.FIXED_BLOCKS > 0:
