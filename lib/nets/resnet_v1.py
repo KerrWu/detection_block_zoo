@@ -161,7 +161,8 @@ class resnetv1(Network):
         fpn_map_list = []
         with tf.variable_scope("fpn", reuse=reuse):
 
-            with slim.arg_scope(resnet_arg_scope(is_training=is_training), weights_initializer=initializers.variance_scaling_initializer()):
+            with slim.arg_scope(resnet_arg_scope(is_training=is_training)):
+                
                 p5 = resnet_utils.conv2d_same(p5, 256, 1, stride=1)
                 p5_map = resnet_utils.conv2d_same(p5, 256, 3, stride=1, scope='fpn_p5')
                 fpn_map_list.append(p5_map)
@@ -236,7 +237,7 @@ class resnetv1(Network):
             if v.name == (self._scope + '/conv1/weights:0'):
                 self._variables_to_fix[v.name] = v
                 continue
-            if v.name.split(':')[0] in var_keep_dic:
+            if v.name.split(':')[0] in var_keep_dic and "fpn" not in v.name:
                 print('Variables restored: %s' % v.name)
                 variables_to_restore.append(v)
 
