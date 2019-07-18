@@ -84,11 +84,10 @@ it is a single-gpu version just for personal learning, multi-gpu version please 
    wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtrainval_06-Nov-2007.tar
    wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtest_06-Nov-2007.tar
    wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCdevkit_08-Jun-2007.tar
-   Extract all of th
    ```
-
    
 
+   
 2. Extract all of these tars into one directory named `VOCdevkit`
 
    ```bash
@@ -242,7 +241,7 @@ final nms threshold = 0.3
 
 ### Results on VOC07 test
 
-| backbone | fpn  |       roi       |           loss            | iter |    training time     | Fps  | map   |
+| backbone | fpn  |       roi       |           loss            | iter |    training time     | Fps  | map50 |
 | :------: | :--: | :-------------: | :-----------------------: | :--: | :------------------: | ---- | ----- |
 |  res101  | w/o  | crop and resize | cross entropy + smooth L1 |  9w  | 18h on Tesla P40 x 1 | 3.35 | 79.17 |
 
