@@ -86,21 +86,21 @@ class Network(object):
             return tf.reshape(reshaped_score, input_shape)
         return tf.nn.softmax(bottom, name=name)
 
-    def _proposal_top_layer(self, rpn_cls_prob, rpn_bbox_pred, name):
+    def _proposal_top_layer(self, rpn_cls_prob, rpn_bbox_pred, name,index=0):
         with tf.variable_scope(name) as scope:
             if cfg.USE_E2E_TF:
                 rois, rpn_scores = proposal_top_layer_tf(
                     rpn_cls_prob,
                     rpn_bbox_pred,
                     self._im_info,
-                    self._feat_stride,
+                    self._feat_stride[index],
                     self._anchors,
                     self._num_anchors
                 )
             else:
                 rois, rpn_scores = tf.py_func(proposal_top_layer,
                                               [rpn_cls_prob, rpn_bbox_pred, self._im_info,
-                                               self._feat_stride, self._anchors, self._num_anchors],
+                                               self._feat_stride[index], self._anchors, self._num_anchors],
                                               [tf.float32, tf.float32], name="proposal_top")
 
             rois.set_shape([cfg.TEST.RPN_TOP_N, 5])
@@ -108,7 +108,7 @@ class Network(object):
 
         return rois, rpn_scores
 
-    def _proposal_layer(self, rpn_cls_prob, rpn_bbox_pred, name):
+    def _proposal_layer(self, rpn_cls_prob, rpn_bbox_pred, name, index=0):
         with tf.variable_scope(name) as scope:
             if cfg.USE_E2E_TF:
                 rois, rpn_scores = proposal_layer_tf(
@@ -116,14 +116,14 @@ class Network(object):
                     rpn_bbox_pred,
                     self._im_info,
                     self._mode,
-                    self._feat_stride,
+                    self._feat_stride[index],
                     self._anchors,
                     self._num_anchors
                 )
             else:
                 rois, rpn_scores = tf.py_func(proposal_layer,
                                               [rpn_cls_prob, rpn_bbox_pred, self._im_info, self._mode,
-                                               self._feat_stride, self._anchors, self._num_anchors],
+                                               self._feat_stride[index], self._anchors, self._num_anchors],
                                               [tf.float32, tf.float32], name="proposal")
 
             rois.set_shape([None, 5])
@@ -139,13 +139,13 @@ class Network(object):
                                         pooled_width=cfg.POOLING_SIZE,
                                         spatial_scale=1. / 16.)[0]
 
-    def _crop_pool_layer(self, bottom, rois, name):
+    def _crop_pool_layer(self, bottom, rois, name, index=0):
         with tf.variable_scope(name) as scope:
             batch_ids = tf.squeeze(tf.slice(rois, [0, 0], [-1, 1], name="batch_id"), [1])
             # Get the normalized coordinates of bounding boxes
             bottom_shape = tf.shape(bottom)
-            height = (tf.to_float(bottom_shape[1]) - 1.) * np.float32(self._feat_stride[0])
-            width = (tf.to_float(bottom_shape[2]) - 1.) * np.float32(self._feat_stride[0])
+            height = (tf.to_float(bottom_shape[1]) - 1.) * np.float32(self._feat_stride[index])
+            width = (tf.to_float(bottom_shape[2]) - 1.) * np.float32(self._feat_stride[index])
             x1 = tf.slice(rois, [0, 1], [-1, 1], name="x1") / width
             y1 = tf.slice(rois, [0, 2], [-1, 1], name="y1") / height
             x2 = tf.slice(rois, [0, 3], [-1, 1], name="x2") / width
@@ -161,11 +161,11 @@ class Network(object):
     def _dropout_layer(self, bottom, name, ratio=0.5):
         return tf.nn.dropout(bottom, ratio, name=name)
 
-    def _anchor_target_layer(self, rpn_cls_score, name):
+    def _anchor_target_layer(self, rpn_cls_score, name, index=0):
         with tf.variable_scope(name) as scope:
             rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights = tf.py_func(
                 anchor_target_layer,
-                [rpn_cls_score, self._gt_boxes, self._im_info, self._feat_stride, self._anchors, self._num_anchors],
+                [rpn_cls_score, self._gt_boxes, self._im_info, self._feat_stride[index], self._anchors, self._num_anchors],
                 [tf.float32, tf.float32, tf.float32, tf.float32],
                 name="anchor_target")
 
@@ -208,7 +208,7 @@ class Network(object):
 
         return rpn_labels
 
-    def _proposal_target_layer(self, rois, roi_scores, name):
+    def _proposal_target_layer(self, rois, roi_scores, name, index=0):
         with tf.variable_scope(name) as scope:
             rois, roi_scores, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = tf.py_func(
                 proposal_target_layer,
@@ -340,10 +340,10 @@ class Network(object):
                 # build the anchors for the image
                 self._anchor_component(index)
                 # region proposal network
-                rois = self._region_proposal(net_conv, is_training, initializer, reuse=reuse)
+                rois = self._region_proposal(net_conv, is_training, initializer, index=index, reuse=reuse)
                 # region of interest pooling
                 if cfg.POOLING_MODE == 'crop':
-                    pool5 = self._crop_pool_layer(net_conv, rois, "pool5")
+                    pool5 = self._crop_pool_layer(net_conv, rois, "pool5", index=index)
                 else:
                     raise NotImplementedError
 
@@ -426,7 +426,7 @@ class Network(object):
 
         return loss
 
-    def _region_proposal(self, net_conv, is_training, initializer, reuse=None):
+    def _region_proposal(self, net_conv, is_training, initializer, index=0, reuse=None):
         rpn = slim.conv2d(net_conv, cfg.RPN_CHANNELS, [3, 3], trainable=is_training, weights_initializer=initializer,
                           scope="rpn_conv/3x3")
         self._act_summaries.append(rpn)
@@ -443,14 +443,14 @@ class Network(object):
                                     weights_initializer=initializer,
                                     padding='VALID', activation_fn=None, scope='rpn_bbox_pred')
         if is_training:
-            rois, roi_scores = self._proposal_layer(rpn_cls_prob, rpn_bbox_pred, "rois")
-            rpn_labels = self._anchor_target_layer(rpn_cls_score, "anchor")
+            rois, roi_scores = self._proposal_layer(rpn_cls_prob, rpn_bbox_pred, "rois", index=index)
+            rpn_labels = self._anchor_target_layer(rpn_cls_score, "anchor", index=index)
             # Try to have a deterministic order for the computing graph, for reproducibility
             with tf.control_dependencies([rpn_labels]):
-                rois, _ = self._proposal_target_layer(rois, roi_scores, "rpn_rois")
+                rois, _ = self._proposal_target_layer(rois, roi_scores, "rpn_rois", index=index)
         else:
             if cfg.TEST.MODE == 'nms':
-                rois, _ = self._proposal_layer(rpn_cls_prob, rpn_bbox_pred, "rois")
+                rois, _ = self._proposal_layer(rpn_cls_prob, rpn_bbox_pred, "rois", index=index)
             elif cfg.TEST.MODE == 'top':
                 rois, _ = self._proposal_top_layer(rpn_cls_prob, rpn_bbox_pred, "rois")
             else:
