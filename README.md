@@ -179,7 +179,13 @@ cd ../..
 
    
 
-   
+## Added Blocks
+
+
+
+[FPN](https://arxiv.org/abs/1612.03144v2) 
+
+
 
 
 
@@ -245,10 +251,10 @@ ResNet101 pretrained on ImageNet
 
 Fix first block during training 
 
-| backbone | fpn  |       roi       |           loss            | iter |    training time     | Fps  | map50 | map70 | map90 |
-| :------: | :--: | :-------------: | :-----------------------: | :--: | :------------------: | ---- | ----- | ----- | ----- |
-|  res101  | w/o  | crop and resize | cross entropy + smooth L1 |  9w  | 18h on Tesla P40 x 1 | 4.57 | 79.17 | 61.99 | 10.48 |
-|  res101  |  w   | crop and resize | cross entropy + smooth L1 |      | 18h on Tesla P40 x 1 |      |       |       |       |
+| backbone | fpn  |       roi       |           loss            | iter |  training time   | Fps  | map50 | map70 | map90 |
+| :------: | :--: | :-------------: | :-----------------------: | :--: | :--------------: | ---- | ----- | ----- | ----- |
+|  res101  | w/o  | crop and resize | cross entropy + smooth L1 | 11w  | 22h on Tesla P40 | 4.57 | 79.30 | 63.87 | 11.49 |
+|  res101  |  w   | crop and resize | cross entropy + smooth L1 |      |                  |      |       |       |       |
 
 
 
