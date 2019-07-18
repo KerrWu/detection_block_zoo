@@ -129,27 +129,34 @@ class resnetv1(Network):
 
         with slim.arg_scope(resnet_arg_scope(is_training=False)):
             net_conv = self._build_base()
+            p2 = net_conv
+
         if cfg.RESNET.FIXED_BLOCKS > 0:
             with slim.arg_scope(resnet_arg_scope(is_training=False)):
-                net_conv, _ = resnet_v1.resnet_v1(net_conv,
+                net_conv, endpoints1 = resnet_v1.resnet_v1(net_conv,
                                                   self._blocks[0:cfg.RESNET.FIXED_BLOCKS],
                                                   global_pool=False,
                                                   include_root_block=False,
                                                   reuse=reuse,
                                                   scope=self._scope)
+
         if cfg.RESNET.FIXED_BLOCKS < 3:
             with slim.arg_scope(resnet_arg_scope(is_training=is_training)):
-                net_conv, endpoints = resnet_v1.resnet_v1(net_conv,
+                net_conv, endpoints2 = resnet_v1.resnet_v1(net_conv,
                                                           self._blocks[cfg.RESNET.FIXED_BLOCKS:-1],
                                                           global_pool=False,
                                                           include_root_block=False,
                                                           reuse=reuse,
                                                           scope=self._scope)
+        if cfg.RESNET.FIXED_BLOCKS > 0:
+            endpoints=  endpoints2.update(endpoints1)
+        else:
+            endpoints = endpoints2
 
-        p5 = endpoints[self._scope + "/block4"]
-        p4 = endpoints[self._scope + "/block3"]
-        p3 = endpoints[self._scope + "/block2"]
-        p2 = endpoints[self._scope + "/block1"]
+
+        p5 = endpoints[self._scope + "/block3"]
+        p4 = endpoints[self._scope + "/block2"]
+        p3 = endpoints[self._scope + "/block1"]
 
         fpn_map_list = []
         with tf.variable_scope("fpn", reuse=reuse):

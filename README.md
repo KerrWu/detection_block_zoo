@@ -249,12 +249,10 @@ final nms threshold = 0.3
 
 ResNet101 pretrained on ImageNet
 
-Fix first block during training 
-
-| backbone | fpn  |       roi       |           loss            | iter |  training time   | Fps  | map50 | map70 | map90 |
-| :------: | :--: | :-------------: | :-----------------------: | :--: | :--------------: | ---- | ----- | ----- | ----- |
-|  res101  | w/o  | crop and resize | cross entropy + smooth L1 | 11w  | 22h on Tesla P40 | 4.57 | 79.30 | 63.87 | 11.49 |
-|  res101  |  w   | crop and resize | cross entropy + smooth L1 |      |                  |      |       |       |       |
+| id   | backbone | fpn  |       roi       |           loss            | iter |  training time   | Fps  | map50 | map70 | map90 |
+| ---- | :------: | :--: | :-------------: | :-----------------------: | :--: | :--------------: | ---- | ----- | ----- | ----- |
+| exp1 |  res101  | w/o  | crop and resize | cross entropy + smooth L1 | 11w  | 22h on Tesla P40 | 4.57 | 79.30 | 63.87 | 11.49 |
+|      |  res101  |  w   | crop and resize | cross entropy + smooth L1 |      |                  |      |       |       |       |
 
 
 
