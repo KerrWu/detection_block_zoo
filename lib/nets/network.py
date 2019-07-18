@@ -209,23 +209,23 @@ class Network(object):
 
             return rois, roi_scores
 
-    def _anchor_component(self):
+    def _anchor_component(self, index=0):
         with tf.variable_scope('ANCHOR_' + self._tag) as scope:
             # just to get the shape right
-            height = tf.to_int32(tf.ceil(self._im_info[0] / np.float32(self._feat_stride[0])))
-            width = tf.to_int32(tf.ceil(self._im_info[1] / np.float32(self._feat_stride[0])))
+            height = tf.to_int32(tf.ceil(self._im_info[0] / np.float32(self._feat_stride[index])))
+            width = tf.to_int32(tf.ceil(self._im_info[1] / np.float32(self._feat_stride[index])))
             if cfg.USE_E2E_TF:
                 anchors, anchor_length = generate_anchors_pre_tf(
                     height,
                     width,
-                    self._feat_stride,
+                    self._feat_stride[index],
                     self._anchor_scales,
                     self._anchor_ratios
                 )
             else:
                 anchors, anchor_length = tf.py_func(generate_anchors_pre,
                                                     [height, width,
-                                                     self._feat_stride, self._anchor_scales, self._anchor_ratios],
+                                                     self._feat_stride[index], self._anchor_scales, self._anchor_ratios],
                                                     [tf.float32, tf.int32], name="generate_anchors")
             anchors.set_shape([None, 4])
             anchor_length.set_shape([])
@@ -258,6 +258,56 @@ class Network(object):
             # region classification
             cls_prob, bbox_pred = self._region_classification(fc7, is_training,
                                                               initializer, initializer_bbox)
+
+        self._score_summaries.update(self._predictions)
+
+        return rois, cls_prob, bbox_pred
+
+
+    def _build_network_with_fpn(self, is_training=True, reuse=tf.AUTO_REUSE):
+        # select initializers
+        if cfg.TRAIN.TRUNCATED:
+            initializer = tf.truncated_normal_initializer(mean=0.0, stddev=0.01)
+            initializer_bbox = tf.truncated_normal_initializer(mean=0.0, stddev=0.001)
+        else:
+            initializer = tf.random_normal_initializer(mean=0.0, stddev=0.01)
+            initializer_bbox = tf.random_normal_initializer(mean=0.0, stddev=0.001)
+
+
+        # fpn_map_list is the list of map from FPN, order from deepest to shallowest
+        # which is same as self._feat_stride
+        fpn_map_list = self._image_to_head_with_fpn(is_training, reuse=reuse)
+        rois_list = []
+        cls_prob_list = []
+        bbox_pred_list = []
+
+        for index, net_conv in enumerate(fpn_map_list):
+            with tf.variable_scope(self._scope, self._scope, reuse=reuse):
+                # build the anchors for the image
+                self._anchor_component(index)
+                # region proposal network
+                rois = self._region_proposal(net_conv, is_training, initializer, reuse=reuse)
+                # region of interest pooling
+                if cfg.POOLING_MODE == 'crop':
+                    pool5 = self._crop_pool_layer(net_conv, rois, "pool5")
+                else:
+                    raise NotImplementedError
+
+            with tf.variable_scope("", reuse=tf.AUTO_REUSE):
+                fc7 = self._head_to_tail(pool5, is_training, reuse=reuse)
+
+            with tf.variable_scope(self._scope, self._scope, reuse=reuse):
+                # region classification
+                cls_prob, bbox_pred = self._region_classification(fc7, is_training,
+                                                                  initializer, initializer_bbox, reuse=reuse)
+
+            rois_list.append(rois)
+            cls_prob_list.append(cls_prob)
+            bbox_pred_list.append(bbox_pred)
+
+        rois = tf.concat(rois_list, axis=0)
+        cls_prob = tf.concat(cls_prob_list, axis=0)
+        bbox_pred = tf.concat(bbox_pred_list, axis=0)
 
         self._score_summaries.update(self._predictions)
 
@@ -323,7 +373,7 @@ class Network(object):
 
         return loss
 
-    def _region_proposal(self, net_conv, is_training, initializer):
+    def _region_proposal(self, net_conv, is_training, initializer, reuse=None):
         rpn = slim.conv2d(net_conv, cfg.RPN_CHANNELS, [3, 3], trainable=is_training, weights_initializer=initializer,
                           scope="rpn_conv/3x3")
         self._act_summaries.append(rpn)
@@ -353,35 +403,94 @@ class Network(object):
             else:
                 raise NotImplementedError
 
-        self._predictions["rpn_cls_score"] = rpn_cls_score
-        self._predictions["rpn_cls_score_reshape"] = rpn_cls_score_reshape
-        self._predictions["rpn_cls_prob"] = rpn_cls_prob
-        self._predictions["rpn_cls_pred"] = rpn_cls_pred
-        self._predictions["rpn_bbox_pred"] = rpn_bbox_pred
-        self._predictions["rois"] = rois
+
+        if self._predictions.get("rpn_cls_score"):
+            self._predictions["rpn_cls_score"] = tf.concat([self._predictions["rpn_cls_score"],rpn_cls_score],axis=0)
+        else:
+            self._predictions["rpn_cls_score"] = rpn_cls_score
+
+        if self._predictions.get("rpn_cls_score_reshape"):
+            self._predictions["rpn_cls_score_reshape"] = tf.concat([self._predictions["rpn_cls_score_reshape"],rpn_cls_score_reshape],axis=0)
+        else:
+            self._predictions["rpn_cls_score_reshape"] = rpn_cls_score_reshape
+
+        if self._predictions.get("rpn_cls_prob"):
+            self._predictions["rpn_cls_prob"] = tf.concat([self._predictions["rpn_cls_prob"],rpn_cls_prob],axis=0)
+        else:
+            self._predictions["rpn_cls_prob"] = rpn_cls_prob
+
+        if self._predictions.get("rpn_cls_pred"):
+            self._predictions["rpn_cls_pred"] = tf.concat([self._predictions["rpn_cls_pred"],rpn_cls_pred],axis=0)
+        else:
+            self._predictions["rpn_cls_pred"] = rpn_cls_pred
+
+        if self._predictions.get("rpn_bbox_pred"):
+            self._predictions["rpn_bbox_pred"] = tf.concat([self._predictions["rpn_bbox_pred"],rpn_bbox_pred],axis=0)
+        else:
+            self._predictions["rpn_bbox_pred"] = rpn_bbox_pred
+
+        if self._predictions.get("rois"):
+            self._predictions["rois"] = tf.concat([self._predictions["rois"],rois],axis=0)
+        else:
+            self._predictions["rois"] = rois
+
+
+
+        # self._predictions["rpn_cls_score"] = rpn_cls_score
+        # self._predictions["rpn_cls_score_reshape"] = rpn_cls_score_reshape
+        # self._predictions["rpn_cls_prob"] = rpn_cls_prob
+        # self._predictions["rpn_cls_pred"] = rpn_cls_pred
+        # self._predictions["rpn_bbox_pred"] = rpn_bbox_pred
+        # self._predictions["rois"] = rois
 
         return rois
 
-    def _region_classification(self, fc7, is_training, initializer, initializer_bbox):
+    def _region_classification(self, fc7, is_training, initializer, initializer_bbox, reuse=None):
         cls_score = slim.fully_connected(fc7, self._num_classes,
                                          weights_initializer=initializer,
                                          trainable=is_training,
-                                         activation_fn=None, scope='cls_score')
+                                         activation_fn=None, scope='cls_score', reuse=reuse)
         cls_prob = self._softmax_layer(cls_score, "cls_prob")
         cls_pred = tf.argmax(cls_score, axis=1, name="cls_pred")
         bbox_pred = slim.fully_connected(fc7, self._num_classes * 4,
                                          weights_initializer=initializer_bbox,
                                          trainable=is_training,
-                                         activation_fn=None, scope='bbox_pred')
+                                         activation_fn=None, scope='bbox_pred', reuse=reuse)
 
-        self._predictions["cls_score"] = cls_score
-        self._predictions["cls_pred"] = cls_pred
-        self._predictions["cls_prob"] = cls_prob
-        self._predictions["bbox_pred"] = bbox_pred
+
+        if self._predictions.get("cls_score"):
+            self._predictions["cls_score"] = tf.concat([self._predictions["cls_score"],cls_score],axis=0)
+        else:
+            self._predictions["rois"] = cls_score
+
+
+        if self._predictions.get("cls_pred"):
+            self._predictions["cls_pred"] = tf.concat([self._predictions["cls_pred"],cls_pred],axis=0)
+        else:
+            self._predictions["cls_pred"] = cls_pred
+
+        if self._predictions.get("cls_prob"):
+            self._predictions["cls_prob"] = tf.concat([self._predictions["cls_prob"],cls_prob],axis=0)
+        else:
+            self._predictions["cls_prob"] = cls_prob
+
+        if self._predictions.get("bbox_pred"):
+            self._predictions["bbox_pred"] = tf.concat([self._predictions["bbox_pred"], bbox_pred], axis=0)
+        else:
+            self._predictions["bbox_pred"] = bbox_pred
+
+
+        # self._predictions["cls_score"] = cls_score
+        # self._predictions["cls_pred"] = cls_pred
+        # self._predictions["cls_prob"] = cls_prob
+        # self._predictions["bbox_pred"] = bbox_pred
 
         return cls_prob, bbox_pred
 
     def _image_to_head(self, is_training, reuse=None):
+        raise NotImplementedError
+
+    def _image_to_head_with_fpn(self, is_training, reuse=None):
         raise NotImplementedError
 
     def _head_to_tail(self, pool5, is_training, reuse=None):

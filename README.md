@@ -248,6 +248,7 @@ Fix first block during training
 | backbone | fpn  |       roi       |           loss            | iter |    training time     | Fps  | map50 | map70 | map90 |
 | :------: | :--: | :-------------: | :-----------------------: | :--: | :------------------: | ---- | ----- | ----- | ----- |
 |  res101  | w/o  | crop and resize | cross entropy + smooth L1 |  9w  | 18h on Tesla P40 x 1 | 4.57 | 79.17 | 61.99 | 10.48 |
+|  res101  |  w   | crop and resize | cross entropy + smooth L1 |      | 18h on Tesla P40 x 1 |      |       |       |       |
 
 
 
