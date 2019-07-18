@@ -347,8 +347,7 @@ class Network(object):
                 else:
                     raise NotImplementedError
 
-            with tf.variable_scope("", reuse=tf.AUTO_REUSE):
-                fc7 = self._head_to_tail(pool5, is_training, reuse=reuse)
+            fc7 = self._head_to_tail(pool5, is_training, reuse=reuse)
 
             with tf.variable_scope(self._scope, self._scope, reuse=reuse):
                 # region classification
