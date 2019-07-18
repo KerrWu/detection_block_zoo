@@ -531,7 +531,8 @@ class Network(object):
                        weights_regularizer=weights_regularizer,
                        biases_regularizer=biases_regularizer,
                        biases_initializer=tf.constant_initializer(0.0)):
-            rois, cls_prob, bbox_pred = self._build_network(training)
+            #rois, cls_prob, bbox_pred = self._build_network(training)
+            rois, cls_prob, bbox_pred = self._build_network_with_fpn(training)
 
         layers_to_output = {'rois': rois}
 
