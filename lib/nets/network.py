@@ -37,6 +37,8 @@ class Network(object):
         self._train_summaries = []
         self._event_summaries = {}
         self._variables_to_fix = {}
+        self._anchors = []
+        self._anchor_length = []
 
     def _add_gt_image(self):
         # add back mean
@@ -94,13 +96,13 @@ class Network(object):
                     rpn_bbox_pred,
                     self._im_info,
                     self._feat_stride[index],
-                    self._anchors,
+                    self._anchors[index],
                     self._num_anchors
                 )
             else:
                 rois, rpn_scores = tf.py_func(proposal_top_layer,
                                               [rpn_cls_prob, rpn_bbox_pred, self._im_info,
-                                               self._feat_stride[index], self._anchors, self._num_anchors],
+                                               self._feat_stride[index], self._anchors[index], self._num_anchors],
                                               [tf.float32, tf.float32], name="proposal_top")
 
             rois.set_shape([cfg.TEST.RPN_TOP_N, 5])
@@ -117,13 +119,13 @@ class Network(object):
                     self._im_info,
                     self._mode,
                     self._feat_stride[index],
-                    self._anchors,
+                    self._anchors[index],
                     self._num_anchors
                 )
             else:
                 rois, rpn_scores = tf.py_func(proposal_layer,
                                               [rpn_cls_prob, rpn_bbox_pred, self._im_info, self._mode,
-                                               self._feat_stride[index], self._anchors, self._num_anchors],
+                                               self._feat_stride[index], self._anchors[index], self._num_anchors],
                                               [tf.float32, tf.float32], name="proposal")
 
             rois.set_shape([None, 5])
@@ -165,7 +167,7 @@ class Network(object):
         with tf.variable_scope(name) as scope:
             rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights = tf.py_func(
                 anchor_target_layer,
-                [rpn_cls_score, self._gt_boxes, self._im_info, self._feat_stride[index], self._anchors, self._num_anchors],
+                [rpn_cls_score, self._gt_boxes, self._im_info, self._feat_stride[index], self._anchors[index], self._num_anchors],
                 [tf.float32, tf.float32, tf.float32, tf.float32],
                 name="anchor_target")
 
@@ -283,8 +285,12 @@ class Network(object):
                                                     [tf.float32, tf.int32], name="generate_anchors")
             anchors.set_shape([None, 4])
             anchor_length.set_shape([])
-            self._anchors = anchors
-            self._anchor_length = anchor_length
+
+
+            self._anchors.append(anchors)
+            self._anchor_length.append(anchor_length)
+            # self._anchors = anchors
+            # self._anchor_length = anchor_length
 
     def _build_network(self, is_training=True):
         # select initializers
