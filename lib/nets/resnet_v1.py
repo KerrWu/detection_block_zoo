@@ -156,6 +156,12 @@ class resnetv1(Network):
         p4 = endpoints[self._scope + "/block2"]
         p3 = endpoints[self._scope + "/block1"]
 
+        print("p5 = ", p5)
+        print("p4 = ", p4)
+        print("p3 = ", p3)
+        print("p2 = ", p2)
+
+
         fpn_map_list = []
         with tf.variable_scope("fpn", reuse=reuse):
 
@@ -246,7 +252,7 @@ class resnetv1(Network):
 
             if v.name.split(':')[0] in var_keep_dic:
                 print('Variables restored: %s' % v.name)
-                print(v.get_shape().as_list(), var_keep_dic[v.name.split(':')[0]])
+                # print(v.get_shape().as_list(), var_keep_dic[v.name.split(':')[0]])
                 variables_to_restore.append(v)
         return variables_to_restore
 
