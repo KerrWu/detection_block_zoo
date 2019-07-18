@@ -191,8 +191,6 @@ class resnetv1(Network):
     def _head_to_tail(self, pool5, is_training, reuse=None):
         with slim.arg_scope(resnet_arg_scope(is_training=is_training)):
 
-            print("pool5 = ", pool5)
-
             fc7, _ = resnet_v1.resnet_v1(pool5,
                                          self._blocks[-1:],
                                          global_pool=False,
@@ -200,10 +198,6 @@ class resnetv1(Network):
                                          reuse=reuse,
                                          scope=self._scope)
 
-            for elem in _.keys():
-                if "shortcut" in elem:
-                    print(elem)
-                    print(_[elem])
             # average pooling done by reduce_mean
             fc7 = tf.reduce_mean(fc7, axis=[1, 2])
         return fc7
@@ -243,7 +237,12 @@ class resnetv1(Network):
             if v.name == (self._scope + '/conv1/weights:0'):
                 self._variables_to_fix[v.name] = v
                 continue
-            if v.name.split(':')[0] in var_keep_dic and "fpn" not in v.name:
+
+            if "fpn" in v.name:
+                print(v.name)
+                continue
+                
+            if v.name.split(':')[0] in var_keep_dic:
                 print('Variables restored: %s' % v.name)
                 variables_to_restore.append(v)
 
