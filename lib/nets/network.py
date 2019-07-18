@@ -175,10 +175,34 @@ class Network(object):
             rpn_bbox_outside_weights.set_shape([1, None, None, self._num_anchors * 4])
 
             rpn_labels = tf.to_int32(rpn_labels, name="to_int32")
-            self._anchor_targets['rpn_labels'] = rpn_labels
-            self._anchor_targets['rpn_bbox_targets'] = rpn_bbox_targets
-            self._anchor_targets['rpn_bbox_inside_weights'] = rpn_bbox_inside_weights
-            self._anchor_targets['rpn_bbox_outside_weights'] = rpn_bbox_outside_weights
+
+            if self._anchor_targets.get('rpn_labels') is not None:
+                self._anchor_targets['rpn_labels'] = tf.concat([self._anchor_targets['rpn_labels'], rpn_labels], axis=0)
+            else:
+                self._anchor_targets['rpn_labels'] = rpn_labels
+
+
+            if self._anchor_targets.get('rpn_bbox_targets') is not None:
+                self._anchor_targets['rpn_bbox_targets'] = tf.concat([self._anchor_targets['rpn_bbox_targets'], rpn_bbox_targets], axis=0)
+            else:
+                self._anchor_targets['rpn_bbox_targets'] = rpn_bbox_targets
+
+
+            if self._anchor_targets.get('rpn_bbox_inside_weights') is not None:
+                self._anchor_targets['rpn_bbox_inside_weights'] = tf.concat([self._anchor_targets['rpn_bbox_inside_weights'], rpn_bbox_inside_weights], axis=0)
+            else:
+                self._anchor_targets['rpn_bbox_inside_weights'] = rpn_bbox_inside_weights
+
+
+            if self._anchor_targets.get('rpn_bbox_outside_weights') is not None:
+                self._anchor_targets['rpn_bbox_outside_weights'] = tf.concat([self._anchor_targets['rpn_bbox_outside_weights'], rpn_bbox_outside_weights], axis=0)
+            else:
+                self._anchor_targets['rpn_bbox_outside_weights'] = rpn_bbox_outside_weights
+
+            # self._anchor_targets['rpn_labels'] = rpn_labels
+            # self._anchor_targets['rpn_bbox_targets'] = rpn_bbox_targets
+            # self._anchor_targets['rpn_bbox_inside_weights'] = rpn_bbox_inside_weights
+            # self._anchor_targets['rpn_bbox_outside_weights'] = rpn_bbox_outside_weights
 
             self._score_summaries.update(self._anchor_targets)
 
@@ -199,11 +223,41 @@ class Network(object):
             bbox_inside_weights.set_shape([cfg.TRAIN.BATCH_SIZE, self._num_classes * 4])
             bbox_outside_weights.set_shape([cfg.TRAIN.BATCH_SIZE, self._num_classes * 4])
 
-            self._proposal_targets['rois'] = rois
-            self._proposal_targets['labels'] = tf.to_int32(labels, name="to_int32")
-            self._proposal_targets['bbox_targets'] = bbox_targets
-            self._proposal_targets['bbox_inside_weights'] = bbox_inside_weights
-            self._proposal_targets['bbox_outside_weights'] = bbox_outside_weights
+
+            if self._proposal_targets.get('rois') is not None:
+                self._proposal_targets['rois'] = tf.concat([self._proposal_targets['rois'], rois], axis=0)
+            else:
+                self._proposal_targets['rois'] = rois
+
+
+            if self._proposal_targets.get('labels') is not None:
+                self._proposal_targets['labels'] = tf.concat([self._proposal_targets['labels'], tf.to_int32(labels, name="to_int32")], axis=0)
+            else:
+                self._proposal_targets['labels'] = tf.to_int32(labels, name="to_int32")
+
+
+            if self._proposal_targets.get('bbox_targets') is not None:
+                self._proposal_targets['bbox_targets'] = tf.concat([self._proposal_targets['bbox_targets'], bbox_targets], axis=0)
+            else:
+                self._proposal_targets['bbox_targets'] = bbox_targets
+
+
+            if self._proposal_targets.get('bbox_inside_weights') is not None:
+                self._proposal_targets['bbox_inside_weights'] = tf.concat([self._proposal_targets['bbox_inside_weights'], bbox_inside_weights], axis=0)
+            else:
+                self._proposal_targets['bbox_inside_weights'] = bbox_inside_weights
+
+            if self._proposal_targets.get('bbox_outside_weights') is not None:
+                self._proposal_targets['bbox_outside_weights'] = tf.concat(
+                    [self._proposal_targets['bbox_outside_weights'], bbox_outside_weights], axis=0)
+            else:
+                self._proposal_targets['bbox_outside_weights'] = bbox_outside_weights
+
+            # self._proposal_targets['rois'] = rois
+            # self._proposal_targets['labels'] = tf.to_int32(labels, name="to_int32")
+            # self._proposal_targets['bbox_targets'] = bbox_targets
+            # self._proposal_targets['bbox_inside_weights'] = bbox_inside_weights
+            # self._proposal_targets['bbox_outside_weights'] = bbox_outside_weights
 
             self._score_summaries.update(self._proposal_targets)
 
@@ -404,32 +458,32 @@ class Network(object):
                 raise NotImplementedError
 
 
-        if self._predictions.get("rpn_cls_score"):
+        if self._predictions.get("rpn_cls_score") is not None:
             self._predictions["rpn_cls_score"] = tf.concat([self._predictions["rpn_cls_score"],rpn_cls_score],axis=0)
         else:
             self._predictions["rpn_cls_score"] = rpn_cls_score
 
-        if self._predictions.get("rpn_cls_score_reshape"):
+        if self._predictions.get("rpn_cls_score_reshape") is not None:
             self._predictions["rpn_cls_score_reshape"] = tf.concat([self._predictions["rpn_cls_score_reshape"],rpn_cls_score_reshape],axis=0)
         else:
             self._predictions["rpn_cls_score_reshape"] = rpn_cls_score_reshape
 
-        if self._predictions.get("rpn_cls_prob"):
+        if self._predictions.get("rpn_cls_prob") is not None:
             self._predictions["rpn_cls_prob"] = tf.concat([self._predictions["rpn_cls_prob"],rpn_cls_prob],axis=0)
         else:
             self._predictions["rpn_cls_prob"] = rpn_cls_prob
 
-        if self._predictions.get("rpn_cls_pred"):
+        if self._predictions.get("rpn_cls_pred") is not None:
             self._predictions["rpn_cls_pred"] = tf.concat([self._predictions["rpn_cls_pred"],rpn_cls_pred],axis=0)
         else:
             self._predictions["rpn_cls_pred"] = rpn_cls_pred
 
-        if self._predictions.get("rpn_bbox_pred"):
+        if self._predictions.get("rpn_bbox_pred") is not None:
             self._predictions["rpn_bbox_pred"] = tf.concat([self._predictions["rpn_bbox_pred"],rpn_bbox_pred],axis=0)
         else:
             self._predictions["rpn_bbox_pred"] = rpn_bbox_pred
 
-        if self._predictions.get("rois"):
+        if self._predictions.get("rois") is not None:
             self._predictions["rois"] = tf.concat([self._predictions["rois"],rois],axis=0)
         else:
             self._predictions["rois"] = rois
@@ -458,23 +512,23 @@ class Network(object):
                                          activation_fn=None, scope='bbox_pred', reuse=reuse)
 
 
-        if self._predictions.get("cls_score"):
+        if self._predictions.get("cls_score") is not None:
             self._predictions["cls_score"] = tf.concat([self._predictions["cls_score"],cls_score],axis=0)
         else:
-            self._predictions["rois"] = cls_score
+            self._predictions["cls_score"] = cls_score
 
 
-        if self._predictions.get("cls_pred"):
+        if self._predictions.get("cls_pred") is not None:
             self._predictions["cls_pred"] = tf.concat([self._predictions["cls_pred"],cls_pred],axis=0)
         else:
             self._predictions["cls_pred"] = cls_pred
 
-        if self._predictions.get("cls_prob"):
+        if self._predictions.get("cls_prob") is not None:
             self._predictions["cls_prob"] = tf.concat([self._predictions["cls_prob"],cls_prob],axis=0)
         else:
             self._predictions["cls_prob"] = cls_prob
 
-        if self._predictions.get("bbox_pred"):
+        if self._predictions.get("bbox_pred") is not None:
             self._predictions["bbox_pred"] = tf.concat([self._predictions["bbox_pred"], bbox_pred], axis=0)
         else:
             self._predictions["bbox_pred"] = bbox_pred
