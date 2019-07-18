@@ -242,9 +242,9 @@ final nms threshold = 0.3
 
 ### Results on VOC07 test
 
-| backbone | fpn  |     roi     |           loss            | iter |  map  |
-| :------: | :--: | :---------: | :-----------------------: | :--: | :---: |
-|  res101  | w/o  | roi pooling | cross entropy + smooth L1 | 1w5  | 59.46 |
+| backbone | fpn  |       roi       |           loss            | iter |    training time     | Fps  | map   |
+| :------: | :--: | :-------------: | :-----------------------: | :--: | :------------------: | ---- | ----- |
+|  res101  | w/o  | crop and resize | cross entropy + smooth L1 |  9w  | 18h on Tesla P40 x 1 | 3.35 | 79.17 |
 
 
 
