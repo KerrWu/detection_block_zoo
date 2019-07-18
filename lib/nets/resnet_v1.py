@@ -200,8 +200,10 @@ class resnetv1(Network):
                                          reuse=reuse,
                                          scope=self._scope)
 
-            print("fc7 = ",fc7)
-            print(_)
+            for elem in _.keys():
+                if "shortcut" in elem:
+                    print(elem)
+                    print(_[elem])
             # average pooling done by reduce_mean
             fc7 = tf.reduce_mean(fc7, axis=[1, 2])
         return fc7
