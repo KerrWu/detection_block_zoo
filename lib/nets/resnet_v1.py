@@ -190,6 +190,9 @@ class resnetv1(Network):
 
     def _head_to_tail(self, pool5, is_training, reuse=None):
         with slim.arg_scope(resnet_arg_scope(is_training=is_training)):
+
+            print("pool5 = ", pool5)
+            
             fc7, _ = resnet_v1.resnet_v1(pool5,
                                          self._blocks[-1:],
                                          global_pool=False,
