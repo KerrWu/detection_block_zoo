@@ -49,7 +49,7 @@ def resnet_arg_scope(is_training=True,
 class resnetv1(Network):
     def __init__(self, num_layers=50):
         Network.__init__(self)
-        self._feat_stride = [16, 8, 4, 2]
+        self._feat_stride = [32, 16, 8, 4]
         self._feat_compress = [1. / float(self._feat_stride[0]), ]
         self._num_layers = num_layers
         self._scope = 'resnet_v1_%d' % num_layers
@@ -115,6 +115,7 @@ class resnetv1(Network):
                                                   reuse=reuse,
                                                   scope=self._scope)
 
+
         self._act_summaries.append(net_conv)
         self._layers['head'] = net_conv
 
@@ -148,6 +149,12 @@ class resnetv1(Network):
                                                           include_root_block=False,
                                                           reuse=reuse,
                                                           scope=self._scope)
+
+                net_conv, endpoints = resnet_v1.resnet_v1(net_conv,
+                                                          blocks,
+                                                          global_pool=False,
+                                                          include_root_block=False,
+                                                          reuse=False)
         if cfg.RESNET.FIXED_BLOCKS > 0:
             endpoints.update(endpoints1)
 
