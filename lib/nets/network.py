@@ -75,7 +75,7 @@ class Network(object):
             to_caffe = tf.transpose(bottom, [0, 3, 1, 2])
             # then force it to have channel 2
             reshaped = tf.reshape(to_caffe,
-                                  tf.concat(axis=0, values=[[1, num_dim, -1], [input_shape[2]]]) )
+                                  tf.concat(axis=0, values=[[1, num_dim, -1], [input_shape[2]]]))
             # then swap the channel back
             to_tf = tf.transpose(reshaped, [0, 2, 3, 1])
             return to_tf
@@ -88,7 +88,7 @@ class Network(object):
             return tf.reshape(reshaped_score, input_shape)
         return tf.nn.softmax(bottom, name=name)
 
-    def _proposal_top_layer(self, rpn_cls_prob, rpn_bbox_pred, name,index=0):
+    def _proposal_top_layer(self, rpn_cls_prob, rpn_bbox_pred, name, index=0):
         with tf.variable_scope(name) as scope:
             if cfg.USE_E2E_TF:
                 rois, rpn_scores = proposal_top_layer_tf(
@@ -167,7 +167,8 @@ class Network(object):
         with tf.variable_scope(name) as scope:
             rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights = tf.py_func(
                 anchor_target_layer,
-                [rpn_cls_score, self._gt_boxes, self._im_info, self._feat_stride[index], self._anchors[index], self._num_anchors],
+                [rpn_cls_score, self._gt_boxes, self._im_info, self._feat_stride[index], self._anchors[index],
+                 self._num_anchors],
                 [tf.float32, tf.float32, tf.float32, tf.float32],
                 name="anchor_target")
 
@@ -183,18 +184,15 @@ class Network(object):
             else:
                 self._anchor_targets['rpn_labels'] = [rpn_labels]
 
-
             if self._anchor_targets.get('rpn_bbox_targets') is not None:
                 self._anchor_targets['rpn_bbox_targets'].append(rpn_bbox_targets)
             else:
                 self._anchor_targets['rpn_bbox_targets'] = [rpn_bbox_targets]
 
-
             if self._anchor_targets.get('rpn_bbox_inside_weights') is not None:
                 self._anchor_targets['rpn_bbox_inside_weights'].append(rpn_bbox_inside_weights)
             else:
                 self._anchor_targets['rpn_bbox_inside_weights'] = [rpn_bbox_inside_weights]
-
 
             if self._anchor_targets.get('rpn_bbox_outside_weights') is not None:
                 self._anchor_targets['rpn_bbox_outside_weights'].append(rpn_bbox_outside_weights)
@@ -225,24 +223,20 @@ class Network(object):
             bbox_inside_weights.set_shape([cfg.TRAIN.BATCH_SIZE, self._num_classes * 4])
             bbox_outside_weights.set_shape([cfg.TRAIN.BATCH_SIZE, self._num_classes * 4])
 
-
             if self._proposal_targets.get('rois') is not None:
                 self._proposal_targets['rois'].append(rois)
             else:
                 self._proposal_targets['rois'] = [rois]
-
 
             if self._proposal_targets.get('labels') is not None:
                 self._proposal_targets['labels'].append(tf.to_int32(labels, name="to_int32"))
             else:
                 self._proposal_targets['labels'] = [tf.to_int32(labels, name="to_int32")]
 
-
             if self._proposal_targets.get('bbox_targets') is not None:
                 self._proposal_targets['bbox_targets'].append(bbox_targets)
             else:
                 self._proposal_targets['bbox_targets'] = [bbox_targets]
-
 
             if self._proposal_targets.get('bbox_inside_weights') is not None:
                 self._proposal_targets['bbox_inside_weights'].append(bbox_inside_weights)
@@ -280,11 +274,11 @@ class Network(object):
             else:
                 anchors, anchor_length = tf.py_func(generate_anchors_pre,
                                                     [height, width,
-                                                     self._feat_stride[index], self._anchor_scales, self._anchor_ratios],
+                                                     self._feat_stride[index], self._anchor_scales,
+                                                     self._anchor_ratios],
                                                     [tf.float32, tf.int32], name="generate_anchors")
             anchors.set_shape([None, 4])
             anchor_length.set_shape([])
-
 
             self._anchors.append(anchors)
             self._anchor_length.append(anchor_length)
@@ -322,7 +316,6 @@ class Network(object):
 
         return rois, cls_prob, bbox_pred
 
-
     def _build_network_with_fpn(self, is_training=True, reuse=tf.AUTO_REUSE):
         # select initializers
         if cfg.TRAIN.TRUNCATED:
@@ -331,7 +324,6 @@ class Network(object):
         else:
             initializer = tf.random_normal_initializer(mean=0.0, stddev=0.01)
             initializer_bbox = tf.random_normal_initializer(mean=0.0, stddev=0.001)
-
 
         # fpn_map_list is the list of map from FPN, order from deepest to shallowest
         # which is same as self._feat_stride
@@ -396,7 +388,6 @@ class Network(object):
             self._losses['cross_entropy'] = 0.0
             self._losses['loss_box'] = 0.0
 
-
             for i in range(len(self._predictions['rpn_cls_score_reshape'])):
                 rpn_cls_score = tf.reshape(self._predictions['rpn_cls_score_reshape'][i], [-1, 2])
                 rpn_label = tf.reshape(self._anchor_targets['rpn_labels'][i], [-1])
@@ -419,7 +410,7 @@ class Network(object):
                                                     rpn_bbox_outside_weights, sigma=sigma_rpn, dim=[1, 2, 3])
 
                 self._losses['rpn_loss_box'] += rpn_loss_box
-                loss+=rpn_loss_box
+                loss += rpn_loss_box
 
             # RCNN, class loss
             for i in range(len(self._predictions["cls_score"])):
@@ -429,7 +420,7 @@ class Network(object):
                     tf.nn.sparse_softmax_cross_entropy_with_logits(logits=cls_score, labels=label))
 
                 self._losses['cross_entropy'] += cross_entropy
-                loss+=cross_entropy
+                loss += cross_entropy
 
             # RCNN, bbox loss
             for i in range(len(self._predictions['bbox_pred'])):
@@ -439,14 +430,14 @@ class Network(object):
                 bbox_outside_weights = self._proposal_targets['bbox_outside_weights'][i]
                 loss_box = self._smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights)
                 self._losses['loss_box'] += loss_box
-                loss+=loss_box
+                loss += loss_box
 
-            #self._losses['cross_entropy'] = cross_entropy
-            #self._losses['loss_box'] = loss_box
-            #self._losses['rpn_cross_entropy'] = rpn_cross_entropy
-            #self._losses['rpn_loss_box'] = rpn_loss_box
+            # self._losses['cross_entropy'] = cross_entropy
+            # self._losses['loss_box'] = loss_box
+            # self._losses['rpn_cross_entropy'] = rpn_cross_entropy
+            # self._losses['rpn_loss_box'] = rpn_loss_box
 
-            #loss = cross_entropy + loss_box + rpn_cross_entropy + rpn_loss_box
+            # loss = cross_entropy + loss_box + rpn_cross_entropy + rpn_loss_box
             regularization_loss = tf.add_n(tf.losses.get_regularization_losses(), 'regu')
             self._losses['total_loss'] = loss + regularization_loss
 
@@ -484,7 +475,6 @@ class Network(object):
             else:
                 raise NotImplementedError
 
-
         if self._predictions.get("rpn_cls_score") is not None:
             self._predictions["rpn_cls_score"].append(rpn_cls_score)
         else:
@@ -515,8 +505,6 @@ class Network(object):
         else:
             self._predictions["rois"] = [rois]
 
-
-
         # self._predictions["rpn_cls_score"] = rpn_cls_score
         # self._predictions["rpn_cls_score_reshape"] = rpn_cls_score_reshape
         # self._predictions["rpn_cls_prob"] = rpn_cls_prob
@@ -538,12 +526,10 @@ class Network(object):
                                          trainable=is_training,
                                          activation_fn=None, scope='bbox_pred', reuse=reuse)
 
-
         if self._predictions.get("cls_score") is not None:
             self._predictions["cls_score"].append(cls_score)
         else:
             self._predictions["cls_score"] = [cls_score]
-
 
         if self._predictions.get("cls_pred") is not None:
             self._predictions["cls_pred"].append(cls_pred)
@@ -559,7 +545,6 @@ class Network(object):
             self._predictions["bbox_pred"].append(bbox_pred)
         else:
             self._predictions["bbox_pred"] = [bbox_pred]
-
 
         # self._predictions["cls_score"] = cls_score
         # self._predictions["cls_pred"] = cls_pred
@@ -612,7 +597,7 @@ class Network(object):
                        weights_regularizer=weights_regularizer,
                        biases_regularizer=biases_regularizer,
                        biases_initializer=tf.constant_initializer(0.0)):
-            #rois, cls_prob, bbox_pred = self._build_network(training)
+            # rois, cls_prob, bbox_pred = self._build_network(training)
             rois, cls_prob, bbox_pred = self._build_network_with_fpn(training)
 
         layers_to_output = {'rois': rois}
@@ -639,7 +624,7 @@ class Network(object):
                 for key, var in self._score_summaries.items():
                     if isinstance(var, list):
                         for index in range(len(var)):
-                            self._add_score_summary(key+" "+str(index), var[index])
+                            self._add_score_summary(key + " " + str(index), var[index])
                     else:
                         self._add_score_summary(key, var)
 
@@ -678,6 +663,12 @@ class Network(object):
                                                          self._predictions['bbox_pred'],
                                                          self._predictions['rois']],
                                                         feed_dict=feed_dict)
+
+        cls_score = np.concatenate(cls_score, axis=0)
+        cls_prob = np.concatenate(cls_prob, axis=0)
+        bbox_pred = np.concatenate(bbox_pred, axis=0)
+        rois = np.concatenate(rois, axis=0)
+
         return cls_score, cls_prob, bbox_pred, rois
 
     def get_summary(self, sess, blobs):
