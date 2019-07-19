@@ -417,7 +417,7 @@ class Network(object):
                 loss+=rpn_loss_box
 
             # RCNN, class loss
-            for i in range(len('cls_score')):
+            for i in range(len(self._predictions["cls_score"])):
                 cls_score = self._predictions["cls_score"][i]
                 label = tf.reshape(self._proposal_targets["labels"][i], [-1])
                 cross_entropy = tf.reduce_mean(
