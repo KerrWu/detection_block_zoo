@@ -390,7 +390,12 @@ class Network(object):
         with tf.variable_scope('LOSS_' + self._tag) as scope:
             # RPN, class loss
 
-            loss = 0
+            loss = 0.0
+            self._losses['rpn_cross_entropy'] = 0.0
+            self._losses['rpn_loss_box'] = 0.0
+            self._losses['cross_entropy'] = 0.0
+            self._losses['loss_box'] = 0.0
+
 
             for i in range(len(self._predictions['rpn_cls_score_reshape'])):
                 rpn_cls_score = tf.reshape(self._predictions['rpn_cls_score_reshape'][i], [-1, 2])
@@ -401,7 +406,7 @@ class Network(object):
                 rpn_cross_entropy = tf.reduce_mean(
                     tf.nn.sparse_softmax_cross_entropy_with_logits(logits=rpn_cls_score, labels=rpn_label))
 
-                self._losses['rpn_cross_entropy'+'_'+str(i)] = rpn_cross_entropy
+                self._losses['rpn_cross_entropy'] += rpn_cross_entropy
                 loss += rpn_cross_entropy
 
             # RPN, bbox loss
@@ -413,7 +418,7 @@ class Network(object):
                 rpn_loss_box = self._smooth_l1_loss(rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights,
                                                     rpn_bbox_outside_weights, sigma=sigma_rpn, dim=[1, 2, 3])
 
-                self._losses['rpn_loss_box'+'_'+str(i)] = rpn_loss_box
+                self._losses['rpn_loss_box'] += rpn_loss_box
                 loss+=rpn_loss_box
 
             # RCNN, class loss
@@ -423,7 +428,7 @@ class Network(object):
                 cross_entropy = tf.reduce_mean(
                     tf.nn.sparse_softmax_cross_entropy_with_logits(logits=cls_score, labels=label))
 
-                self._losses['cross_entropy'+'_'+str(i)] = cross_entropy
+                self._losses['cross_entropy'] += cross_entropy
                 loss+=cross_entropy
 
             # RCNN, bbox loss
@@ -433,7 +438,7 @@ class Network(object):
                 bbox_inside_weights = self._proposal_targets['bbox_inside_weights'][i]
                 bbox_outside_weights = self._proposal_targets['bbox_outside_weights'][i]
                 loss_box = self._smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights)
-                self._losses['loss_box'+'_'+str(i)] = loss_box
+                self._losses['loss_box'] += loss_box
                 loss+=loss_box
 
             #self._losses['cross_entropy'] = cross_entropy
