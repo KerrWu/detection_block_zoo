@@ -535,23 +535,23 @@ class Network(object):
 
 
         if self._predictions.get("cls_score") is not None:
-            self._predictions["cls_score"] = tf.concat([self._predictions["cls_score"],cls_score],axis=0)
+            self._predictions["cls_score"].append(cls_score)
         else:
-            self._predictions["cls_score"] = cls_score
+            self._predictions["cls_score"] = [cls_score]
 
 
         if self._predictions.get("cls_pred") is not None:
-            self._predictions["cls_pred"] = tf.concat([self._predictions["cls_pred"],cls_pred],axis=0)
+            self._predictions["cls_pred"].append(cls_pred)
         else:
-            self._predictions["cls_pred"] = cls_pred
+            self._predictions["cls_pred"] = [cls_pred]
 
         if self._predictions.get("cls_prob") is not None:
-            self._predictions["cls_prob"] = tf.concat([self._predictions["cls_prob"],cls_prob],axis=0)
+            self._predictions["cls_prob"].append(cls_prob)
         else:
-            self._predictions["cls_prob"] = cls_prob
+            self._predictions["cls_prob"] = [cls_prob]
 
         if self._predictions.get("bbox_pred") is not None:
-            self._predictions["bbox_pred"] = tf.concat([self._predictions["bbox_pred"], bbox_pred], axis=0)
+            self._predictions["bbox_pred"].append(bbox_pred)
         else:
             self._predictions["bbox_pred"] = bbox_pred
 
@@ -620,7 +620,7 @@ class Network(object):
             means = np.tile(np.array(cfg.TRAIN.BBOX_NORMALIZE_MEANS), (self._num_classes))
             for i in range(len(self._predictions["bbox_pred"])):
                 self._predictions["bbox_pred"][i] *= stds
-                self._predictions["bbox_pred"] += means
+                self._predictions["bbox_pred"][i] += means
         else:
             self._add_losses()
             layers_to_output.update(self._losses)
