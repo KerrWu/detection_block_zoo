@@ -150,11 +150,6 @@ class resnetv1(Network):
                                                           reuse=reuse,
                                                           scope=self._scope)
 
-                net_conv, endpoints = resnet_v1.resnet_v1(net_conv,
-                                                          blocks,
-                                                          global_pool=False,
-                                                          include_root_block=False,
-                                                          reuse=False)
         if cfg.RESNET.FIXED_BLOCKS > 0:
             endpoints.update(endpoints1)
 
