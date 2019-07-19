@@ -159,6 +159,9 @@ __C.TRAIN.RPN_POSITIVE_WEIGHT = -1.0
 # For COCO, setting USE_ALL_GT to False will exclude boxes that are flagged as ''iscrowd''
 __C.TRAIN.USE_ALL_GT = True
 
+# max stride of the backbone, height and width would be resize to multiple of the value
+__C.TRAIN.MAX_STRIDE= 32
+
 #
 # Testing options
 #
@@ -166,7 +169,7 @@ __C.TEST = edict()
 
 # Scale to use during testing (can NOT list multiple scales)
 # The scale is the pixel size of an image's shortest side
-__C.TEST.SCALES = (600,)
+__C.TEST.SCALES = (512,)
 
 # Max pixel size of the longest side of a scaled input image
 __C.TEST.MAX_SIZE = 1000
