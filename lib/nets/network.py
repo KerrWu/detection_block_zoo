@@ -553,7 +553,7 @@ class Network(object):
         if self._predictions.get("bbox_pred") is not None:
             self._predictions["bbox_pred"].append(bbox_pred)
         else:
-            self._predictions["bbox_pred"] = bbox_pred
+            self._predictions["bbox_pred"] = [bbox_pred]
 
 
         # self._predictions["cls_score"] = cls_score
