@@ -142,10 +142,10 @@ __C.TRAIN.RPN_BATCHSIZE = 256
 __C.TRAIN.RPN_NMS_THRESH = 0.7
 
 # Number of top scoring boxes to keep before apply NMS to RPN proposals
-__C.TRAIN.RPN_PRE_NMS_TOP_N = 6000
+__C.TRAIN.RPN_PRE_NMS_TOP_N = 12000
 
 # Number of top scoring boxes to keep after applying NMS to RPN proposals
-__C.TRAIN.RPN_POST_NMS_TOP_N = 1000
+__C.TRAIN.RPN_POST_NMS_TOP_N = 2000
 
 # Deprecated (outside weights)
 __C.TRAIN.RPN_BBOX_INSIDE_WEIGHTS = (1.0, 1.0, 1.0, 1.0)

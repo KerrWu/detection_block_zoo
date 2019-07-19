@@ -171,20 +171,20 @@ class resnetv1(Network):
                 fpn_map_list.append(p5_map)
 
                 p4 = resnet_utils.conv2d_same(p4, 256, 1, stride=1)
-                p5_up = slim.convolution2d_transpose(p5, 256, 1, stride=2)
+                p5_up = slim.convolution2d_transpose(p5, 256, 1, stride=2, padding="VALID")
                 #p4 = tf.pad(p4, [[0,0],[0,0],[0,1],[0,0]], constant_values=0)
                 p4 =  p5_up + p4
                 p4_map = resnet_utils.conv2d_same(p4, 1024, 3, stride=1, scope='fpn_p4')
                 fpn_map_list.append(p4_map)
 
                 p3 = resnet_utils.conv2d_same(p3, 256, 1, stride=1)
-                p4_up = slim.convolution2d_transpose(p4, 256, 1, stride=2)
+                p4_up = slim.convolution2d_transpose(p4, 256, 1, stride=2, padding="VALID")
                 p3 = p4_up + p3
                 p3_map = resnet_utils.conv2d_same(p3, 1024, 3, stride=1, scope='fpn_p3')
                 fpn_map_list.append(p3_map)
 
                 p2 = resnet_utils.conv2d_same(p2, 256, 1, stride=1)
-                p3_up = slim.convolution2d_transpose(p3, 256, 1, stride=2)
+                p3_up = slim.convolution2d_transpose(p3, 256, 1, stride=2, padding="VALID")
                 p2 = p3_up + p2
                 p2_map = resnet_utils.conv2d_same(p2, 1024, 3, stride=1, scope='fpn_p2')
                 fpn_map_list.append(p2_map)
