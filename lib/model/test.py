@@ -16,7 +16,6 @@ try:
 except ImportError:
     import pickle
 import os
-import math
 
 from utils.timer import Timer
 from utils.blob import im_list_to_blob
