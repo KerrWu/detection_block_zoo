@@ -630,8 +630,14 @@ class Network(object):
                 val_summaries.append(self._add_gt_image_summary())
                 for key, var in self._event_summaries.items():
                     val_summaries.append(tf.summary.scalar(key, var))
+
                 for key, var in self._score_summaries.items():
-                    self._add_score_summary(key, var)
+                    if isinstance(var, list):
+                        for index in range(len(var)):
+                            self._add_score_summary(key+" "+str(index), var[index])
+                    else:
+                        self._add_score_summary(key, var)
+
                 for var in self._act_summaries:
                     self._add_act_summary(var)
                 for var in self._train_summaries:
