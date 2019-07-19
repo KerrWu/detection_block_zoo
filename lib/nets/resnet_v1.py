@@ -179,6 +179,7 @@ class resnetv1(Network):
 
                 p3 = resnet_utils.conv2d_same(p3, 256, 1, stride=1)
                 p4_up = slim.convolution2d_transpose(p4, 256, 1, stride=2, padding="VALID")
+                p3 = tf.pad(p3, [[0, 0], [0, 1], [1, 2], [0, 0]], constant_values=0)
                 p3 = p4_up + p3
                 p3_map = resnet_utils.conv2d_same(p3, 1024, 3, stride=1, scope='fpn_p3')
                 fpn_map_list.append(p3_map)
