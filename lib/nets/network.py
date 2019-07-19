@@ -427,7 +427,7 @@ class Network(object):
                 loss+=cross_entropy
 
             # RCNN, bbox loss
-            for i in range(self._predictions['bbox_pred']):
+            for i in range(len(self._predictions['bbox_pred'])):
                 bbox_pred = self._predictions['bbox_pred'][i]
                 bbox_targets = self._proposal_targets['bbox_targets'][i]
                 bbox_inside_weights = self._proposal_targets['bbox_inside_weights'][i]
