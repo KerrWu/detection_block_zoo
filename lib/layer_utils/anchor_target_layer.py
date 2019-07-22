@@ -40,6 +40,8 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, _feat_stride, all_anch
     # keep only inside anchors
     anchors = all_anchors[inds_inside, :]
 
+    assert anchors.size>0, "*******Find no anchor*******, all anchors size = {}".format(all_anchors.size)
+
     # label: 1 is positive, 0 is negative, -1 is dont care
     labels = np.empty((len(inds_inside),), dtype=np.float32)
     labels.fill(-1)
