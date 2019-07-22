@@ -249,10 +249,10 @@ final nms threshold = 0.3
 
 ResNet101 pretrained on ImageNet
 
-| id   | backbone | fpn  |       roi       |           loss            | iter |  training time   | Fps  | mAP50 | mAP70 | mAP90 |
-| ---- | :------: | :--: | :-------------: | :-----------------------: | :--: | :--------------: | ---- | ----- | ----- | ----- |
-| exp1 |  res101  | w/o  | crop and resize | cross entropy + smooth L1 | 11w  | 22h on Tesla P40 | 4.57 | 79.30 | 63.87 | 11.49 |
-|      |  res101  |  w   | crop and resize | cross entropy + smooth L1 |      |                  |      |       |       |       |
+| id   | backbone | fpn  |       roi       |           loss            | iter |  training time   | Fps  | mAP50 | mAP70 | mAP90 | scale                    | ratio       |
+| ---- | :------: | :--: | :-------------: | :-----------------------: | :--: | :--------------: | ---- | ----- | ----- | ----- | ------------------------ | ----------- |
+| exp1 |  res101  | w/o  | crop and resize | cross entropy + smooth L1 | 11w  | 22h on Tesla P40 | 4.57 | 79.30 | 63.87 | 11.49 | base=16<br />[8, 16, 32] | [0.5, 1, 2] |
+| exp2 |  res101  |  w   | crop and resize | cross entropy + smooth L1 |      |                  |      |       |       |       | base=stride<br />[8, 16] | [0.5, 1, 2] |
 
 
 
