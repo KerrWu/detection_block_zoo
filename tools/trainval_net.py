@@ -85,7 +85,8 @@ def combined_roidb(imdb_names):
         imdb = get_imdb(imdb_names)
 
     for index, dic in enumerate(roidb):
-        print(index, len(dic["boxes"]))
+        if len(dic["boxes"]) < 1:
+            print(index, len(dic["boxes"]))
 
     return imdb, roidb
 
