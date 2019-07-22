@@ -369,10 +369,6 @@ def train_net(network, imdb, roidb, valroidb, output_dir, tb_dir,
     roidb = filter_roidb(roidb)
     valroidb = filter_roidb(valroidb)
 
-    problem_roidb = roidb[3900:4500]
-    problem_roidb.extend(roidb)
-    roidb = problem_roidb
-
     tfconfig = tf.ConfigProto(allow_soft_placement=True)
     tfconfig.gpu_options.allow_growth = True
 
