@@ -37,7 +37,7 @@ case ${DATASET} in
     TEST_IMDB="voc_2007_test"
     STEPSIZE="[80000]"
     ITERS=200000
-    ANCHORS="[8,16]"
+    ANCHORS="[8,16,32]"
     RATIOS="[0.5,1,2]"
     ;;
   coco)

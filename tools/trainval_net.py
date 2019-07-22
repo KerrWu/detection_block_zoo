@@ -84,10 +84,6 @@ def combined_roidb(imdb_names):
     else:
         imdb = get_imdb(imdb_names)
 
-    for index, dic in enumerate(roidb):
-        if len(dic["boxes"]) < 1:
-            print("Find no object in image {}".format(dic["image"]))
-
     return imdb, roidb
 
 
