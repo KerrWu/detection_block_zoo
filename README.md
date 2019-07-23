@@ -266,7 +266,7 @@ I changed some hyper-params in exp2 for the FPN
 
 (3) Rescale shortest side to 600 but make sure longest side would not becoming larger than 3600. In exp1 the corresponding setting is 600 and 1000. The reason I changed these setting is that I use 32 base size for the smallest feature map, so it may resulting no valid anchor for images with large height-width ratio (It is actually existed in PASCAL VOC dataset). So I use a larger tolerance for longest side to handle this problem. 
 
-After these change, the total anchor number is basically as follows , for an image with height = 600, width = 800
+After these change, the total number of valid anchors is basically as follows , for an image with height = 600, width = 800
 
 In exp1: ``18k``
 
