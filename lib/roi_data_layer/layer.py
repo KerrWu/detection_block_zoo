@@ -52,15 +52,17 @@ class RoIDataLayer(object):
       inds = np.reshape(inds, (-1, 2))
       row_perm = np.random.permutation(np.arange(inds.shape[0]))
       inds = np.reshape(inds[row_perm, :], (-1,))
+
+      print("**************")
+      print(self._perm[4039:4042])
+
+
       self._perm = inds
     else:
       self._perm = np.random.permutation(np.arange(len(self._roidb)))
     # Restore the random state
     if self._random:
       np.random.set_state(st0)
-
-    print("******bad sample********")
-    print(self._perm[4039], self._perm[4040], self._perm[4041])
     self._cur = 0
 
   def _get_next_minibatch_inds(self):
