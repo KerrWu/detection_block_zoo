@@ -59,6 +59,7 @@ class RoIDataLayer(object):
     if self._random:
       np.random.set_state(st0)
 
+    print("******bad sample********")
     print(self._perm[4039], self._perm[4040], self._perm[4041])
     self._cur = 0
 
