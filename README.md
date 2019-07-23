@@ -256,13 +256,21 @@ ResNet101 pretrained on ImageNet
 
 
 
-exp2:
+Exp2:
 
-``base size for each feature map = stride = [32, 16, 8, 4]`` 
-``anchor ratio = 16``.
-``shortest side <= 600``
-``longest side <= 3600`` 
+I changed some hyper-params in exp2 for the FPN
 
-The total anchor number is basically as follows, for an image with ``height = 600, width = 800``,
-``p5 = 50, p4 = 2k, p3 = 14k, p2 = 70k, total<100k``
+(1) Base anchor size for each feature map = ``stride`` = ``[32, 16, 8, 4]``, in exp1 which without FPN, the base acnhor size for the predicting feature map is 16.
+
+(2) Anchor scale = 16, in exp1 it is [32, 16, 8]. Considering I have used different base size for different feature maps in FPN, I think it is not neccessay any more to use 3 different anchor scales for each feature map.
+
+(3) Rescale shortest side to 600 but make sure longest side would not becoming larger than 3600. In exp1 the corresponding setting is 600 and 1000. The reason I changed these setting is that I use 32 base size for the smallest feature map, so it may resulting no valid anchor for images with large height-width ratio (It is actually existed in PASCAL VOC dataset). So I use a larger tolerance for longest side to handle this problem. 
+
+After these change, the total anchor number is basically as follows , for an image with height = 600, width = 800
+
+In exp1: ``18k``
+
+In exp2: ``p5 = 50, p4 = 2k, p3 = 14k, p2 = 70k, total<100k``
+
+
 
