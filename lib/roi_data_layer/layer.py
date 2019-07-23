@@ -62,6 +62,12 @@ class RoIDataLayer(object):
 
     print("***************")
     print(self._perm[4039:4042])
+
+    self._perm[0] = self._perm[4039]
+    self._perm[1] = self._perm[4040]
+    self._perm[2] = self._perm[4041]
+
+
     self._cur = 0
 
   def _get_next_minibatch_inds(self):
