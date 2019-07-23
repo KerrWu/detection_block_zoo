@@ -58,7 +58,8 @@ class RoIDataLayer(object):
     # Restore the random state
     if self._random:
       np.random.set_state(st0)
-      
+
+    print(self._perm[4039], self._perm[4040], self._perm[4041])
     self._cur = 0
 
   def _get_next_minibatch_inds(self):
