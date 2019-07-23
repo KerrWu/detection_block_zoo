@@ -258,11 +258,11 @@ ResNet101 pretrained on ImageNet
 
 exp2:
 
-``base size = stride = [32, 16, 8, 4]`` 
+``base size for each feature map = stride = [32, 16, 8, 4]`` 
 ``anchor ratio = 16``.
-``shortest side = 600``
-``longest side = 3600`` 
+``shortest side <= 600``
+``longest side <= 3600`` 
 
-The total anchor number is basically as follows:
-``p5 = , p4 = , p3 = , p2 = ``
+The total anchor number is basically as follows, for an image with ``height = 600, width = 800``,
+``p5 = 50, p4 = 2k, p3 = 14k, p2 = 70k, total<100k``
 
