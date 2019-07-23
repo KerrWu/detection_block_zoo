@@ -40,13 +40,13 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, _feat_stride, all_anch
     # keep only inside anchors
     anchors = all_anchors[inds_inside, :]
 
-    # print("stride = {}".format(_feat_stride))
-    # print("height = {}, width = {}".format(height, width))
-    # print("anchor num = {}".format(all_anchors.size / 4))
-    # print("anchor example = {}".format(all_anchors[0]))
-    # print("preserved anchor num = {}".format(anchors.size / 4))
-    # print("preserved anchor example = {}".format(anchors[0]))
-    
+    print("stride = {}".format(_feat_stride))
+    print("height = {}, width = {}".format(height, width))
+    print("anchor num = {}".format(all_anchors.size / 4))
+    print("anchor example = {}".format(all_anchors[0]))
+    print("preserved anchor num = {}".format(anchors.size / 4))
+    print("preserved anchor example = {}".format(anchors[0]))
+
     assert anchors.size > 0, "stride={}, height={}, width={}, anchor num{}, anchor example={}".format(_feat_stride,
                                                                                                       height, width,
                                                                                                       all_anchors.size / 4,

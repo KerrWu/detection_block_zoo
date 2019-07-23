@@ -60,11 +60,16 @@ __C.TRAIN.SUMMARY_INTERVAL = 180
 
 # Scale to use during training (can list multiple scales)
 # The scale is the pixel size of an image's shortest side
-# It is must to make sure that the
+
+# Since the largest ratio of height and width is 1:5.
+# I use MAX_SIZE 4x than shortest side, and we use 32 as my largest stride
+# which means the longest anchor is 360
+
 __C.TRAIN.SCALES = (600,)
 
 # Max pixel size of the longest side of a scaled input image
-__C.TRAIN.MAX_SIZE = 1000
+# 6000 / 600 means the max ratio of longest side and shortest side is 6:1
+__C.TRAIN.MAX_SIZE = 3600
 
 # Images to use per minibatch
 __C.TRAIN.IMS_PER_BATCH = 1
