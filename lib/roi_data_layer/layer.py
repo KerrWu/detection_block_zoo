@@ -61,11 +61,6 @@ class RoIDataLayer(object):
         if self._random:
             np.random.set_state(st0)
 
-        print("***************")
-        print(self._perm[4040:4070])
-
-        self._perm[:30] = self._perm[4040:4070]
-
         self._cur = 0
 
     def _get_next_minibatch_inds(self):

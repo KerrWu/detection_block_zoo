@@ -40,6 +40,11 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, _feat_stride, all_anch
     # keep only inside anchors
     anchors = all_anchors[inds_inside, :]
 
+    print("stride = {}".format(_feat_stride))
+    print("anchor num = {}".format(all_anchors.size / 4))
+    print("preserved anchor num = {}".format(anchors.size / 4))
+
+
     assert anchors.size>0, "*******Find no anchor*******, all anchors size = {}".format(all_anchors.size)
 
     # label: 1 is positive, 0 is negative, -1 is dont care
