@@ -60,6 +60,7 @@ __C.TRAIN.SUMMARY_INTERVAL = 180
 
 # Scale to use during training (can list multiple scales)
 # The scale is the pixel size of an image's shortest side
+# It is must to make sure that the
 __C.TRAIN.SCALES = (600,)
 
 # Max pixel size of the longest side of a scaled input image
