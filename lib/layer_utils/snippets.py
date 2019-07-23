@@ -39,7 +39,7 @@ def generate_anchors_pre_tf(height, width, feat_stride=16, anchor_scales=(8, 16,
   K = tf.multiply(width, height)
   shifts = tf.transpose(tf.reshape(shifts, shape=[1, K, 4]), perm=(1, 0, 2))
 
-  anchors = generate_anchors(base_size=feat_stride, ratios=np.array(anchor_ratios), scales=np.array(anchor_scales))
+  anchors = generate_anchors(base_size=feat_stride//2, ratios=np.array(anchor_ratios), scales=np.array(anchor_scales))
   A = anchors.shape[0]
   anchor_constant = tf.constant(anchors.reshape((1, A, 4)), dtype=tf.int32)
 
