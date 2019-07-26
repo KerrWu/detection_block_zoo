@@ -195,7 +195,11 @@ class resnetv1(Network):
                 fpn_map_list.append(p2_map)
 
         self._act_summaries.append(net_conv)
-        self._layers['head'] = net_conv
+
+        if self._layers.get("head", None):
+            self._layers['head'].append(net_conv)
+        else:
+            self._layers['head'] = [net_conv]
 
         return fpn_map_list
 
