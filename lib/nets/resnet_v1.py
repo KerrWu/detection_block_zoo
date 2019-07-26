@@ -164,7 +164,7 @@ class resnetv1(Network):
         fpn_map_list = []
         with tf.variable_scope("fpn", reuse=reuse):
 
-            with slim.arg_scope(resnet_arg_scope(is_training=is_training)):
+            with slim.arg_scope(resnet_arg_scope(is_training=is_training, )):
 
                 # the last feature map could be use in prediction without additional process
                 fpn_map_list.append(p5)
@@ -248,11 +248,11 @@ class resnetv1(Network):
                 self._variables_to_fix[v.name] = v
                 continue
 
-            if "fpn" in v.name:
-                continue
+            # if "fpn" in v.name:
+            #     continue
 
             if v.name.split(':')[0] in var_keep_dic:
-                print('Variables restored: %s' % v.name)
+                # print('Variables restored: %s' % v.name)
                 # print(v.get_shape().as_list(), var_keep_dic[v.name.split(':')[0]])
                 variables_to_restore.append(v)
         return variables_to_restore
