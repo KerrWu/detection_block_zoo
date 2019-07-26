@@ -248,8 +248,8 @@ class resnetv1(Network):
                 self._variables_to_fix[v.name] = v
                 continue
 
-            # if "fpn" in v.name:
-            #     continue
+            if "fpn" in v.name:
+                continue
 
             if v.name.split(':')[0] in var_keep_dic:
                 print('Variables restored: %s' % v.name)
