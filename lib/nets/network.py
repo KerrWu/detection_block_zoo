@@ -397,7 +397,7 @@ class Network(object):
                 rpn_cross_entropy = tf.reduce_mean(
                     tf.nn.sparse_softmax_cross_entropy_with_logits(logits=rpn_cls_score, labels=rpn_label))
 
-                self._losses['rpn_cross_entropy'] += rpn_cross_entropy
+                self._losses['rpn_cross_entropy'] += 0.5*rpn_cross_entropy
                 loss += rpn_cross_entropy
 
             # RPN, bbox loss
@@ -409,7 +409,7 @@ class Network(object):
                 rpn_loss_box = self._smooth_l1_loss(rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights,
                                                     rpn_bbox_outside_weights, sigma=sigma_rpn, dim=[1, 2, 3])
 
-                self._losses['rpn_loss_box'] += rpn_loss_box
+                self._losses['rpn_loss_box'] += 0.2*rpn_loss_box
                 loss += rpn_loss_box
 
             # RCNN, class loss
