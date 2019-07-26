@@ -167,9 +167,9 @@ class resnetv1(Network):
             with slim.arg_scope(resnet_arg_scope(is_training=is_training, )):
 
                 # the last feature map could be use in prediction without additional process
+                p5 = resnet_utils.conv2d_same(p5, 256, 1, stride=1)
                 fpn_map_list.append(p5)
 
-                p5 = resnet_utils.conv2d_same(p5, 256, 1, stride=1)
                 p4 = resnet_utils.conv2d_same(p4, 256, 1, stride=1)
                 # p5_up = slim.convolution2d_transpose(p5, 256, 1, stride=2, padding="VALID")
                 p4_shape = tf.shape(p4)
