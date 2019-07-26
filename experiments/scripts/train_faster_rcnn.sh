@@ -66,10 +66,12 @@ else
 fi
 set -x
 
+# --weight data/imagenet_weights/${NET}.ckpt \
+
 if [ ! -f ${NET_FINAL}.index ]; then
   if [[ ! -z  ${EXTRA_ARGS_SLUG}  ]]; then
     CUDA_VISIBLE_DEVICES=${GPU_ID} time python ./tools/trainval_net.py \
-      --weight data/imagenet_weights/${NET}.ckpt \
+      --weight output/res101/voc2007_trainval+voc_2012_trainval/default/res101_faster_rcnn_iter_180000.ckpt \
       --imdb ${TRAIN_IMDB} \
       --imdbval ${TEST_IMDB} \
       --iters ${ITERS} \
