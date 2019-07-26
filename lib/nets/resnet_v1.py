@@ -168,7 +168,7 @@ class resnetv1(Network):
 
                 # the last feature map could be use in prediction without additional process
                 fpn_map_list.append(p5)
-                
+
                 p5 = resnet_utils.conv2d_same(p5, 256, 1, stride=1)
                 p4 = resnet_utils.conv2d_same(p4, 256, 1, stride=1)
                 # p5_up = slim.convolution2d_transpose(p5, 256, 1, stride=2, padding="VALID")
@@ -227,7 +227,7 @@ class resnetv1(Network):
                             resnet_v1_block('block2', base_depth=128, num_units=4, stride=2),
                             # use stride 1 for the last conv4 layer
                             resnet_v1_block('block3', base_depth=256, num_units=23, stride=2),
-                            resnet_v1_block('block4', base_depth=128, num_units=3, stride=1)]
+                            resnet_v1_block('block4', base_depth=512, num_units=3, stride=1)]
 
         elif self._num_layers == 152:
             self._blocks = [resnet_v1_block('block1', base_depth=64, num_units=3, stride=2),
@@ -250,6 +250,9 @@ class resnetv1(Network):
                 continue
 
             if "fpn" in v.name:
+                continue
+
+            if "rpn_conv/3x3/weights" in v.name:
                 continue
 
             if v.name.split(':')[0] in var_keep_dic:
