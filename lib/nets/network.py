@@ -439,8 +439,9 @@ class Network(object):
 
             # loss = cross_entropy + loss_box + rpn_cross_entropy + rpn_loss_box
             loss = self._losses['rpn_cross_entropy']+self._losses['rpn_loss_box']+self._losses['cross_entropy']+self._losses['loss_box']
-            regularization_loss = tf.add_n(tf.losses.get_regularization_losses(), 'regu')
-            self._losses['total_loss'] = loss + regularization_loss
+            # regularization_loss = tf.add_n(tf.losses.get_regularization_losses(), 'regu')
+            # self._losses['total_loss'] = loss + regularization_loss
+            self._losses['total_loss'] = loss
 
             self._event_summaries.update(self._losses)
 
