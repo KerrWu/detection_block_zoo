@@ -223,27 +223,27 @@ class Network(object):
             bbox_inside_weights.set_shape([cfg.TRAIN.BATCH_SIZE, self._num_classes * 4])
             bbox_outside_weights.set_shape([cfg.TRAIN.BATCH_SIZE, self._num_classes * 4])
 
-            if self._proposal_targets.get('rois') is not None:
+            if self._proposal_targets.get('rois', None) is not None:
                 self._proposal_targets['rois'].append(rois)
             else:
                 self._proposal_targets['rois'] = [rois]
 
-            if self._proposal_targets.get('labels') is not None:
+            if self._proposal_targets.get('labels', None) is not None:
                 self._proposal_targets['labels'].append(tf.to_int32(labels, name="to_int32"))
             else:
                 self._proposal_targets['labels'] = [tf.to_int32(labels, name="to_int32")]
 
-            if self._proposal_targets.get('bbox_targets') is not None:
+            if self._proposal_targets.get('bbox_targets', None) is not None:
                 self._proposal_targets['bbox_targets'].append(bbox_targets)
             else:
                 self._proposal_targets['bbox_targets'] = [bbox_targets]
 
-            if self._proposal_targets.get('bbox_inside_weights') is not None:
+            if self._proposal_targets.get('bbox_inside_weights', None) is not None:
                 self._proposal_targets['bbox_inside_weights'].append(bbox_inside_weights)
             else:
                 self._proposal_targets['bbox_inside_weights'] = [bbox_inside_weights]
 
-            if self._proposal_targets.get('bbox_outside_weights') is not None:
+            if self._proposal_targets.get('bbox_outside_weights', None) is not None:
                 self._proposal_targets['bbox_outside_weights'].append(bbox_outside_weights)
             else:
                 self._proposal_targets['bbox_outside_weights'] = [bbox_outside_weights]
@@ -333,7 +333,7 @@ class Network(object):
         bbox_pred_list = []
 
         for index, net_conv in enumerate(fpn_map_list):
-            with tf.variable_scope(self._scope, self._scope, reuse=reuse):
+            with tf.variable_scope(self._scope, reuse=reuse):
                 # build the anchors for the image
                 self._anchor_component(index)
                 # region proposal network
@@ -346,7 +346,7 @@ class Network(object):
 
             fc7 = self._head_to_tail(pool5, is_training, reuse=reuse)
 
-            with tf.variable_scope(self._scope, self._scope, reuse=reuse):
+            with tf.variable_scope(self._scope, reuse=reuse):
                 # region classification
                 cls_prob, bbox_pred = self._region_classification(fc7, is_training,
                                                                   initializer, initializer_bbox, reuse=reuse)
@@ -438,8 +438,9 @@ class Network(object):
             # self._losses['rpn_loss_box'] = rpn_loss_box
 
             # loss = cross_entropy + loss_box + rpn_cross_entropy + rpn_loss_box
-            regularization_loss = tf.add_n(tf.losses.get_regularization_losses(), 'regu')
-            self._losses['total_loss'] = loss + regularization_loss
+            # regularization_loss = tf.add_n(tf.losses.get_regularization_losses(), 'regu')
+            # self._losses['total_loss'] = loss + regularization_loss
+            self._losses['total_loss'] = loss
 
             self._event_summaries.update(self._losses)
 
@@ -475,32 +476,32 @@ class Network(object):
             else:
                 raise NotImplementedError
 
-        if self._predictions.get("rpn_cls_score") is not None:
+        if self._predictions.get("rpn_cls_score", None) is not None:
             self._predictions["rpn_cls_score"].append(rpn_cls_score)
         else:
             self._predictions["rpn_cls_score"] = [rpn_cls_score]
 
-        if self._predictions.get("rpn_cls_score_reshape") is not None:
+        if self._predictions.get("rpn_cls_score_reshape", None) is not None:
             self._predictions["rpn_cls_score_reshape"].append(rpn_cls_score_reshape)
         else:
             self._predictions["rpn_cls_score_reshape"] = [rpn_cls_score_reshape]
 
-        if self._predictions.get("rpn_cls_prob") is not None:
+        if self._predictions.get("rpn_cls_prob", None) is not None:
             self._predictions["rpn_cls_prob"].append(rpn_cls_prob)
         else:
             self._predictions["rpn_cls_prob"] = [rpn_cls_prob]
 
-        if self._predictions.get("rpn_cls_pred") is not None:
+        if self._predictions.get("rpn_cls_pred", None) is not None:
             self._predictions["rpn_cls_pred"].append(rpn_cls_pred)
         else:
             self._predictions["rpn_cls_pred"] = [rpn_cls_pred]
 
-        if self._predictions.get("rpn_bbox_pred") is not None:
+        if self._predictions.get("rpn_bbox_pred", None) is not None:
             self._predictions["rpn_bbox_pred"].append(rpn_bbox_pred)
         else:
             self._predictions["rpn_bbox_pred"] = [rpn_bbox_pred]
 
-        if self._predictions.get("rois") is not None:
+        if self._predictions.get("rois", None) is not None:
             self._predictions["rois"].append(rois)
         else:
             self._predictions["rois"] = [rois]
