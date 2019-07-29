@@ -36,8 +36,7 @@ def resnet_arg_scope(is_training=True,
 
     with arg_scope(
             [slim.conv2d],
-            #weights_regularizer=slim.l2_regularizer(cfg.TRAIN.WEIGHT_DECAY),
-            weights_regularizer=None,
+            weights_regularizer=slim.l2_regularizer(cfg.TRAIN.WEIGHT_DECAY),
             weights_initializer=slim.variance_scaling_initializer(),
             trainable=is_training,
             activation_fn=tf.nn.relu,
