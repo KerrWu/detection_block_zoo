@@ -259,8 +259,8 @@ class resnetv1(Network):
             if "rpn_conv/3x3/weights" in v.name:
                 continue
 
-            if "block4" in v.name:
-                continue
+            # if "block4" in v.name:
+            #     continue
 
             if v.name.split(':')[0] in var_keep_dic:
                 # print('Variables restored: %s' % v.name)

@@ -131,6 +131,13 @@ class SolverWrapper(object):
 
             # Compute the gradients with regard to the loss
             gvs = self.optimizer.compute_gradients(loss)
+
+            for grad, var in gvs:
+                if grad is not None:
+                    tf.summary.histogram(var.op.name+"/gradients", grad)
+
+            self.net._summary_op = tf.summary.merge_all()
+
             # Double the gradient of the bias if set
             if cfg.TRAIN.DOUBLE_BIAS:
                 final_gvs = []

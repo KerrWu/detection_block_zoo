@@ -634,7 +634,8 @@ class Network(object):
                 for var in self._train_summaries:
                     self._add_train_summary(var)
 
-            self._summary_op = tf.summary.merge_all()
+            # TODO
+            # self._summary_op = tf.summary.merge_all()
             self._summary_op_val = tf.summary.merge(val_summaries)
 
         layers_to_output.update(self._predictions)
