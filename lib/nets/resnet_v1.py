@@ -153,9 +153,6 @@ class resnetv1(Network):
         if cfg.RESNET.FIXED_BLOCKS > 0:
             endpoints.update(endpoints1)
 
-        for elem in endpoints.items():
-            print(elem)
-
         p5 = endpoints[self._scope + "/block3"]
         p4 = endpoints[self._scope + "/block2"]
         p3 = endpoints[self._scope + "/block1"]
