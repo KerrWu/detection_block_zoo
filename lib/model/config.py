@@ -19,7 +19,7 @@ cfg = __C
 __C.TRAIN = edict()
 
 # Initial learning rate
-__C.TRAIN.LEARNING_RATE = 0.001
+__C.TRAIN.LEARNING_RATE = 0.0001
 
 # Momentum
 __C.TRAIN.MOMENTUM = 0.9
@@ -246,7 +246,7 @@ __C.MOBILENET.REGU_DEPTH = False
 __C.MOBILENET.FIXED_LAYERS = 5
 
 # Weight decay for the mobilenet weights
-__C.MOBILENET.WEIGHT_DECAY = 0.000004
+__C.MOBILENET.WEIGHT_DECAY = 0.0000001
 
 # Depth multiplier
 __C.MOBILENET.DEPTH_MULTIPLIER = 1.
