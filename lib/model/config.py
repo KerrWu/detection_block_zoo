@@ -25,7 +25,7 @@ __C.TRAIN.LEARNING_RATE = 0.0001
 __C.TRAIN.MOMENTUM = 0.9
 
 # Weight decay, for regularization
-__C.TRAIN.WEIGHT_DECAY = 0.0001
+__C.TRAIN.WEIGHT_DECAY = 0.00001
 
 # Factor for reducing the learning rate
 __C.TRAIN.GAMMA = 0.1
@@ -246,7 +246,7 @@ __C.MOBILENET.REGU_DEPTH = False
 __C.MOBILENET.FIXED_LAYERS = 5
 
 # Weight decay for the mobilenet weights
-__C.MOBILENET.WEIGHT_DECAY = 0.00000001
+__C.MOBILENET.WEIGHT_DECAY = 0.00001
 
 # Depth multiplier
 __C.MOBILENET.DEPTH_MULTIPLIER = 1.
