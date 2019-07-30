@@ -164,31 +164,32 @@ class resnetv1(Network):
             with slim.arg_scope(resnet_arg_scope(is_training=is_training, )):
 
                 # the last feature map could be use in prediction without additional process
-                p5 = resnet_utils.conv2d_same(p5, 256, 1, stride=1)
+                # resnet_utils.conv2d_same(p3, 256, 1, stride=1)
+                p5 = slim.conv2d(p5, 256, [1,1], stride=1)
                 fpn_map_list.append(p5)
 
-                p4 = resnet_utils.conv2d_same(p4, 256, 1, stride=1)
+                p4 = slim.conv2d(p4, 256, [1,1], stride=1)
                 # p5_up = slim.convolution2d_transpose(p5, 256, 1, stride=2, padding="VALID")
                 p4_shape = tf.shape(p4)
                 p5_up = tf.image.resize_nearest_neighbor(p5, [p4_shape[1], p4_shape[2]])
                 p4 =  p5_up + p4
-                p4_map = resnet_utils.conv2d_same(p4, 256, 3, stride=1, scope='fpn_p4')
+                p4_map = slim.conv2d(p4, 256, [3,3], stride=1, scope='fpn_p4')
                 fpn_map_list.append(p4_map)
 
-                p3 = resnet_utils.conv2d_same(p3, 256, 1, stride=1)
+                p3 = slim.conv2d(p3, 256, [1,1], stride=1)
                 # p4_up = slim.convolution2d_transpose(p4, 256, 1, stride=2, padding="VALID")
                 p3_shape = tf.shape(p3)
                 p4_up = tf.image.resize_nearest_neighbor(p4, [p3_shape[1], p3_shape[2]])
                 p3 = p4_up + p3
-                p3_map = resnet_utils.conv2d_same(p3, 256, 3, stride=1, scope='fpn_p3')
+                p3_map = slim.conv2d(p3, 256, [3,3], stride=1, scope='fpn_p3')
                 fpn_map_list.append(p3_map)
 
-                p2 = resnet_utils.conv2d_same(p2, 256, 1, stride=1)
+                p2 = slim.conv2d(p2, 256, [1,1], stride=1)
                 # p3_up = slim.convolution2d_transpose(p3, 256, 1, stride=2, padding="VALID")
                 p2_shape = tf.shape(p2)
                 p3_up = tf.image.resize_nearest_neighbor(p3, [p2_shape[1], p2_shape[2]])
                 p2 = p3_up + p2
-                p2_map = resnet_utils.conv2d_same(p2, 256, 3, stride=1, scope='fpn_p2')
+                p2_map = slim.conv2d(p2, 256, [3,3], stride=1, scope='fpn_p2')
                 fpn_map_list.append(p2_map)
 
         self._act_summaries.append(net_conv)
@@ -204,7 +205,7 @@ class resnetv1(Network):
         with tf.variable_scope("fpn", reuse=reuse):
             with slim.arg_scope(resnet_arg_scope(is_training=is_training)):
 
-                pool5 = resnet_utils.conv2d_same(pool5, 512, 1, stride=1)
+                pool5 = slim.conv2d(pool5, 512, [1,1], stride=1)
                 fc7, _ = resnet_v1.resnet_v1(pool5,
                                              self._blocks[-1:],
                                              global_pool=False,
