@@ -19,7 +19,7 @@ cfg = __C
 __C.TRAIN = edict()
 
 # Initial learning rate
-__C.TRAIN.LEARNING_RATE = 0.0001
+__C.TRAIN.LEARNING_RATE = 0.01
 
 # Momentum
 __C.TRAIN.MOMENTUM = 0.9
