@@ -205,7 +205,7 @@ class resnetv1(Network):
 
         with slim.arg_scope(resnet_arg_scope(is_training=is_training)):
 
-            pool5 = slim.conv2d(pool5, 512, [1,1], stride=1, reuse=reuse)
+            pool5 = slim.conv2d(pool5, 512, [1,1], stride=1, reuse=reuse, scope="block4_begin")
             fc7, _ = resnet_v1.resnet_v1(pool5,
                                          self._blocks[-1:],
                                          global_pool=False,
