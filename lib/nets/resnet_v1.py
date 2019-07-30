@@ -202,19 +202,19 @@ class resnetv1(Network):
         return fpn_map_list
 
     def _head_to_tail(self, pool5, is_training, reuse=None):
-        with tf.variable_scope("fpn", reuse=reuse):
-            with slim.arg_scope(resnet_arg_scope(is_training=is_training)):
 
-                pool5 = slim.conv2d(pool5, 512, [1,1], stride=1)
-                fc7, _ = resnet_v1.resnet_v1(pool5,
-                                             self._blocks[-1:],
-                                             global_pool=False,
-                                             include_root_block=False,
-                                             reuse=reuse,
-                                             scope=self._scope)
+        with slim.arg_scope(resnet_arg_scope(is_training=is_training)):
 
-                # average pooling done by reduce_mean
-                fc7 = tf.reduce_mean(fc7, axis=[1, 2])
+            pool5 = slim.conv2d(pool5, 512, [1,1], stride=1, reuse=reuse)
+            fc7, _ = resnet_v1.resnet_v1(pool5,
+                                         self._blocks[-1:],
+                                         global_pool=False,
+                                         include_root_block=False,
+                                         reuse=reuse,
+                                         scope=self._scope)
+
+            # average pooling done by reduce_mean
+            fc7 = tf.reduce_mean(fc7, axis=[1, 2])
         return fc7
 
     def _decide_blocks(self):
