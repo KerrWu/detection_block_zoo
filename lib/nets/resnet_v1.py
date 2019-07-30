@@ -258,7 +258,6 @@ class resnetv1(Network):
 
             # if "rpn_conv/3x3/weights" in v.name:
             #     continue
-
             # if "block4/unit_1" in v.name:
             #     continue
 
